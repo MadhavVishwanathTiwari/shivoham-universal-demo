@@ -1,0 +1,49 @@
+# Normalize line endings: store LF in the repo, check out native on Windows.
+# Without this, editing on Windows rewrites whole files as CRLF and every diff
+# looks like a full-file rewrite.
+* text=auto eol=lf
+
+# Explicitly text, so `text=auto` never has to guess.
+*.ts     text
+*.tsx    text
+*.js     text
+*.mjs    text
+*.cjs    text
+*.json   text
+*.css    text
+*.html   text
+*.md     text
+*.py     text
+*.yml    text
+*.yaml   text
+
+# Windows-native tooling; leave these as CRLF.
+*.bat    text eol=crlf
+*.cmd    text eol=crlf
+
+# Shell scripts must stay LF or they will not execute.
+*.sh     text eol=lf
+
+# Binary — never normalize, never diff as text. Corrupting the card mesh or
+# the atlas here would be silent and hard to trace.
+*.glb    binary
+*.gltf   binary
+*.jpg    binary
+*.jpeg   binary
+*.jfif   binary
+*.png    binary
+*.webp   binary
+*.avif   binary
+*.ico    binary
+*.gif    binary
+*.mp4    binary
+*.webm   binary
+*.pdf    binary
+*.woff   binary
+*.woff2  binary
+*.ttf    binary
+*.otf    binary
+*.pyc    binary
+
+# Collapse lockfile noise in GitHub diffs and exclude it from language stats.
+package-lock.json linguist-generated=true -diff
