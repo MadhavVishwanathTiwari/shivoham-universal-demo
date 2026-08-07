@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   animate,
   motion,
@@ -20,6 +20,15 @@ import { mapRange, useScrollStyle } from "./useScrollStyle";
 /** Fraction of the screen a thumb must travel to fan the deck fully open. */
 const FAN_TRAVEL = 0.55;
 const FLICK_VELOCITY = 260;
+
+/**
+ * The mobile deck opens itself a beat after the hero lands, so the spread is
+ * the state you arrive in rather than something you have to discover. Scroll
+ * takes it back to the stack, same as desktop — `gather` owns that, not `fan`,
+ * which is why this only ever runs once.
+ */
+const OPEN_DELAY = 1;
+const OPEN_DURATION = 1.3;
 
 const clamp01 = (x: number) => (x < 0 ? 0 : x > 1 ? 1 : x);
 
@@ -77,9 +86,35 @@ export default function HeroSection() {
   const fan = useMotionValue(0);
   const fanAtStart = useRef(0);
   const didPan = useRef(false);
-  const hintOpacity = useTransform(fan, [0, 0.14], [1, 0]);
+
+  // Stops the auto-open. Held in a ref rather than state so a gesture can take
+  // the fan over mid-flight without re-rendering the canvas under the finger.
+  const stopOpening = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    if (!isMobile) return;
+    // Reduced motion still needs to arrive at the spread — it just skips the
+    // travel, the same way the desktop deal does.
+    if (reducedMotion) {
+      fan.set(1);
+      return;
+    }
+
+    const open = animate(fan, 1, {
+      delay: OPEN_DELAY,
+      duration: OPEN_DURATION,
+      ease: [0.22, 1, 0.36, 1],
+    });
+    const cancel = () => {
+      open.stop();
+      stopOpening.current = null;
+    };
+    stopOpening.current = cancel;
+    return cancel;
+  }, [fan, isMobile, reducedMotion]);
 
   const handlePanStart = useCallback(() => {
+    stopOpening.current?.();
     fanAtStart.current = fan.get();
   }, [fan]);
 
@@ -117,6 +152,7 @@ export default function HeroSection() {
   const handleTap = useCallback(
     (index: number | null) => {
       if (didPan.current || !isMobile) return;
+      stopOpening.current?.();
       setSelected((current) => (current === index ? null : index));
     },
     [isMobile],
@@ -200,32 +236,16 @@ export default function HeroSection() {
               className="font-inter text-parchment-white/55 mt-5 max-w-md text-sm text-pretty md:text-base"
             >
               {isMobile
-                ? "Drag to fan the deck. Tap a card to read it."
+                ? "Tap a card to read it."
                 : "Move across the spread. Each card turns to meet you."}
             </motion.p>
           </div>
         </div>
 
-        {/* ------------------------------------------------- mobile drag hint */}
-        {isMobile && (
-          <motion.div
-            style={{ opacity: hintOpacity }}
-            className="pointer-events-none absolute inset-x-0 bottom-[16svh] z-10 flex justify-center"
-          >
-            <motion.span
-              animate={{ x: [-10, 10, -10] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-              className="border-astral-gold/30 text-astral-gold/80 font-inter rounded-full border px-4 py-2 text-[10px] tracking-[0.24em] uppercase backdrop-blur-sm"
-            >
-              Drag to fan
-            </motion.span>
-          </motion.div>
-        )}
-
         {/* ---------------------------------------------------- scroll cue */}
         <div
           ref={cueRef}
-          className="pointer-events-none absolute inset-x-0 bottom-6 z-10 hidden justify-center md:flex"
+          className="pointer-events-none absolute inset-x-0 bottom-6 z-10 flex justify-center"
         >
           <div className="flex flex-col items-center gap-2">
             <span className="text-parchment-white/35 font-inter text-[10px] tracking-[0.3em] uppercase">
