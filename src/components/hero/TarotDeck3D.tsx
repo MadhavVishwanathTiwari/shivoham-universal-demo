@@ -47,6 +47,14 @@ const WAVE_LAYER = 1.1; // monotonic depth ramp across the ribbon
 const WAVE_DEPTH = 0.22; // the undulation riding on top of it
 const WAVE_PHASE = 0.0; // 0 bulges the middle toward the camera
 
+// Matches HeroCanvas's camera position.z. The depth ramp above pulls one side
+// of the wave closer to the camera than the other, which perspective then
+// magnifies unevenly — without correcting for it the ribbon reads visibly
+// off-centre (wide gap on the far side, cards crowding the near edge) even
+// though `px` is computed as a symmetric `c * span`. wavePose divides px by
+// this to cancel that out.
+const CAMERA_Z = 7.4;
+
 // Sized so the outermost card's *rotated* silhouette still lands inside a 375px
 // screen, while neighbours stay ~0.2 units apart — a ~45px wedge to tap.
 const ARC_SPREAD = 0.18; // rad between neighbours in the mobile fan
@@ -137,9 +145,9 @@ function stackPose(i: number, n: number, out: Pose) {
 function wavePose(i: number, n: number, span: number, out: Pose) {
   const u = n > 1 ? i / (n - 1) : 0.5;
   const c = u - 0.5;
-  out.px = c * span;
-  out.py = Math.sin(u * Math.PI * 2) * WAVE_AMP + WAVE_Y;
   out.pz = c * WAVE_LAYER + Math.sin(u * Math.PI + WAVE_PHASE) * WAVE_DEPTH;
+  out.px = (c * span * (CAMERA_Z - out.pz)) / CAMERA_Z;
+  out.py = Math.sin(u * Math.PI * 2) * WAVE_AMP + WAVE_Y;
   out.rx = -0.2 + Math.sin(u * Math.PI * 2.4) * 0.1;
   out.ry = Math.PI + c * 0.95;
   out.rz = Math.sin(u * Math.PI * 2 + 0.35) * 0.3 + jitter(i, 4) * 0.05;

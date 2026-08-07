@@ -2,11 +2,17 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "// web": "Starts the dev server. autoPort is deliberately false: Next 16 detects a duplicate `next dev` by DIRECTORY, not by port, so a second instance dies instantly no matter what port it lands on. Failing loudly here is correct — if it says 'already running', use the `attached` config below instead of retrying.",
       "name": "web",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
-      "port": 3000,
-      "autoPort": true
+      "port": 3002,
+      "autoPort": false
+    },
+    {
+      "// attached": "No command — attaches to a dev server that is already running (started by `npm run dev` or by the user). Use this whenever `web` reports a duplicate instead of spawning a competing server.",
+      "name": "attached",
+      "url": "http://localhost:3002"
     },
     {
       "name": "smoke",
