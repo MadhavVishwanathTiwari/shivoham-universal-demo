@@ -1,0 +1,1283 @@
+{
+  "model": "/models/card.glb",
+  "back": "/textures/back.webp",
+  "cardSize": [
+    1.0,
+    1.714286,
+    0.005
+  ],
+  "atlases": [
+    {
+      "src": "/textures/deck-3328.webp",
+      "width": 3328,
+      "height": 2640,
+      "cols": 13,
+      "rows": 6,
+      "tile": [
+        256,
+        440
+      ],
+      "maxTextureSize": 4096,
+      "bytes": 2962200
+    },
+    {
+      "src": "/textures/deck-1920.webp",
+      "width": 1920,
+      "height": 1918,
+      "cols": 12,
+      "rows": 7,
+      "tile": [
+        160,
+        274
+      ],
+      "maxTextureSize": 2048,
+      "bytes": 1185522
+    }
+  ],
+  "cards": [
+    {
+      "id": "c01",
+      "index": 0,
+      "name": "Ace of Cups",
+      "arcana": "Minor Arcana",
+      "suit": "Cups",
+      "number": "1",
+      "keywords": [
+        "intuition",
+        "spirituality",
+        "affection",
+        "motivation"
+      ],
+      "essence": "Trusting your feelings",
+      "image": "/cards/c01.jpg"
+    },
+    {
+      "id": "c02",
+      "index": 1,
+      "name": "Two of Cups",
+      "arcana": "Minor Arcana",
+      "suit": "Cups",
+      "number": "2",
+      "keywords": [
+        "union",
+        "attraction",
+        "combination",
+        "affection"
+      ],
+      "essence": "Being drawn to someone",
+      "image": "/cards/c02.jpg"
+    },
+    {
+      "id": "c03",
+      "index": 2,
+      "name": "Three of Cups",
+      "arcana": "Minor Arcana",
+      "suit": "Cups",
+      "number": "3",
+      "keywords": [
+        "celebration",
+        "expression",
+        "community",
+        "friendliness"
+      ],
+      "essence": "Celebrating your feelings or connections with others",
+      "image": "/cards/c03.jpg"
+    },
+    {
+      "id": "c04",
+      "index": 3,
+      "name": "Four of Cups",
+      "arcana": "Minor Arcana",
+      "suit": "Cups",
+      "number": "4",
+      "keywords": [
+        "boredom",
+        "listlessness",
+        "lethargy",
+        "stability"
+      ],
+      "essence": "Maintaining your emotional stability",
+      "image": "/cards/c04.jpg"
+    },
+    {
+      "id": "c05",
+      "index": 4,
+      "name": "Five of Cups",
+      "arcana": "Minor Arcana",
+      "suit": "Cups",
+      "number": "5",
+      "keywords": [
+        "loss",
+        "despair",
+        "re-evaluation",
+        "regret"
+      ],
+      "essence": "Acknowledging loss and moving on",
+      "image": "/cards/c05.jpg"
+    },
+    {
+      "id": "c06",
+      "index": 5,
+      "name": "Six of Cups",
+      "arcana": "Minor Arcana",
+      "suit": "Cups",
+      "number": "6",
+      "keywords": [
+        "charity",
+        "sharing",
+        "sacrifice",
+        "cooperation"
+      ],
+      "essence": "Donating your time and talents to others",
+      "image": "/cards/c06.jpg"
+    },
+    {
+      "id": "c07",
+      "index": 6,
+      "name": "Seven of Cups",
+      "arcana": "Minor Arcana",
+      "suit": "Cups",
+      "number": "7",
+      "keywords": [
+        "imagination",
+        "dreams",
+        "illusions",
+        "goals"
+      ],
+      "essence": "Motivating yourself with images of future success",
+      "image": "/cards/c07.jpg"
+    },
+    {
+      "id": "c08",
+      "index": 7,
+      "name": "Eight of Cups",
+      "arcana": "Minor Arcana",
+      "suit": "Cups",
+      "number": "8",
+      "keywords": [
+        "longing",
+        "dissatisfaction",
+        "quest",
+        "departure"
+      ],
+      "essence": "Wanting something better",
+      "image": "/cards/c08.jpg"
+    },
+    {
+      "id": "c09",
+      "index": 8,
+      "name": "Nine of Cups",
+      "arcana": "Minor Arcana",
+      "suit": "Cups",
+      "number": "9",
+      "keywords": [
+        "satisfaction",
+        "sensuality",
+        "luxury",
+        "pleasure"
+      ],
+      "essence": "Being delighted with your own achievements",
+      "image": "/cards/c09.jpg"
+    },
+    {
+      "id": "c10",
+      "index": 9,
+      "name": "Ten of Cups",
+      "arcana": "Minor Arcana",
+      "suit": "Cups",
+      "number": "10",
+      "keywords": [
+        "joy",
+        "fulfillment",
+        "overwhelming emotion",
+        "giddiness"
+      ],
+      "essence": "Having more than you ever dreamed",
+      "image": "/cards/c10.jpg"
+    },
+    {
+      "id": "c11",
+      "index": 10,
+      "name": "Page of Cups",
+      "arcana": "Minor Arcana",
+      "suit": "Cups",
+      "number": "11",
+      "keywords": [
+        "enthusiasm",
+        "first impressions",
+        "romanticism",
+        "superficiality"
+      ],
+      "essence": "Showing your emotions freely",
+      "image": "/cards/c11.jpg"
+    },
+    {
+      "id": "c12",
+      "index": 11,
+      "name": "Knight of Cups",
+      "arcana": "Minor Arcana",
+      "suit": "Cups",
+      "number": "12",
+      "keywords": [
+        "fervor",
+        "zeal",
+        "moodiness",
+        "illumination"
+      ],
+      "essence": "Being deeply committed to a cause",
+      "image": "/cards/c12.jpg"
+    },
+    {
+      "id": "c13",
+      "index": 12,
+      "name": "Queen of Cups",
+      "arcana": "Minor Arcana",
+      "suit": "Cups",
+      "number": "13",
+      "keywords": [
+        "insightfulness",
+        "spirituality",
+        "compassion",
+        "empathy"
+      ],
+      "essence": "Allowing yourself to be moved by the plight of others",
+      "image": "/cards/c13.jpg"
+    },
+    {
+      "id": "c14",
+      "index": 13,
+      "name": "King of Cups",
+      "arcana": "Minor Arcana",
+      "suit": "Cups",
+      "number": "14",
+      "keywords": [
+        "wisdom",
+        "diplomacy",
+        "restraint",
+        "composure"
+      ],
+      "essence": "Keeping a stiff upper lip",
+      "image": "/cards/c14.jpg"
+    },
+    {
+      "id": "m00",
+      "index": 14,
+      "name": "The Fool",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "0",
+      "keywords": [
+        "freedom",
+        "faith",
+        "inexperience",
+        "innocence"
+      ],
+      "essence": "Freeing yourself from limitation",
+      "image": "/cards/m00.jpg"
+    },
+    {
+      "id": "m01",
+      "index": 15,
+      "name": "The Magician",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "1",
+      "keywords": [
+        "capability",
+        "empowerment",
+        "activity"
+      ],
+      "essence": "Taking appropriate action",
+      "image": "/cards/m01.jpg"
+    },
+    {
+      "id": "m02",
+      "index": 16,
+      "name": "The High Priestess",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "2",
+      "keywords": [
+        "intuition",
+        "reflection",
+        "purity",
+        "initiation"
+      ],
+      "essence": "Listening to your feelings and intuitions",
+      "image": "/cards/m02.jpg"
+    },
+    {
+      "id": "m03",
+      "index": 17,
+      "name": "The Empress",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "3",
+      "keywords": [
+        "fertility",
+        "productivity",
+        "ripeness",
+        "nurturing"
+      ],
+      "essence": "Nurturing yourself and others",
+      "image": "/cards/m03.jpg"
+    },
+    {
+      "id": "m04",
+      "index": 18,
+      "name": "The Emperor",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "4",
+      "keywords": [
+        "authority",
+        "regulation",
+        "direction",
+        "structure"
+      ],
+      "essence": "Exercising authority",
+      "image": "/cards/m04.jpg"
+    },
+    {
+      "id": "m05",
+      "index": 19,
+      "name": "The Hierophant",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "5",
+      "keywords": [
+        "guidance",
+        "knowledge",
+        "revelation",
+        "belief"
+      ],
+      "essence": "Teaching or guiding others",
+      "image": "/cards/m05.jpg"
+    },
+    {
+      "id": "m06",
+      "index": 20,
+      "name": "The Lovers",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "6",
+      "keywords": [
+        "love",
+        "passion",
+        "unity",
+        "choice"
+      ],
+      "essence": "Being in love",
+      "image": "/cards/m06.jpg"
+    },
+    {
+      "id": "m07",
+      "index": 21,
+      "name": "The Chariot",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "7",
+      "keywords": [
+        "advancement",
+        "victory",
+        "triumph",
+        "success"
+      ],
+      "essence": "Breaking through barriers",
+      "image": "/cards/m07.jpg"
+    },
+    {
+      "id": "m08",
+      "index": 22,
+      "name": "Strength",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "8",
+      "keywords": [
+        "discipline",
+        "boldness",
+        "self-discipline",
+        "power"
+      ],
+      "essence": "Imposing restrictions on yourself for your own benefit",
+      "image": "/cards/m08.jpg"
+    },
+    {
+      "id": "m09",
+      "index": 23,
+      "name": "The Hermit",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "9",
+      "keywords": [
+        "solitude",
+        "experience",
+        "stillness",
+        "withdrawal"
+      ],
+      "essence": "Becoming or seeking out a guru",
+      "image": "/cards/m09.jpg"
+    },
+    {
+      "id": "m10",
+      "index": 24,
+      "name": "Wheel of Fortune",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "10",
+      "keywords": [
+        "luck",
+        "randomness",
+        "cycles",
+        "karma"
+      ],
+      "essence": "Allowing events to unfold",
+      "image": "/cards/m10.jpg"
+    },
+    {
+      "id": "m11",
+      "index": 25,
+      "name": "Justice",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "11",
+      "keywords": [
+        "balance",
+        "law",
+        "fairness",
+        "objectivity"
+      ],
+      "essence": "Making an objective decision",
+      "image": "/cards/m11.jpg"
+    },
+    {
+      "id": "m12",
+      "index": 26,
+      "name": "The Hanged Man",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "12",
+      "keywords": [
+        "enlightenment",
+        "sacrifice",
+        "perspective",
+        "suspension"
+      ],
+      "essence": "Seeing growth opportunities in unpleasant events",
+      "image": "/cards/m12.jpg"
+    },
+    {
+      "id": "m13",
+      "index": 27,
+      "name": "Death",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "13",
+      "keywords": [
+        "ending",
+        "conclusion",
+        "transition",
+        "passage"
+      ],
+      "essence": "Bringing an unpleasant phase of life to an end",
+      "image": "/cards/m13.jpg"
+    },
+    {
+      "id": "m14",
+      "index": 28,
+      "name": "Temperance",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "14",
+      "keywords": [
+        "blending",
+        "synthesis",
+        "mediation",
+        "combination"
+      ],
+      "essence": "Bringing opposites together",
+      "image": "/cards/m14.jpg"
+    },
+    {
+      "id": "m15",
+      "index": 29,
+      "name": "The Devil",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "15",
+      "keywords": [
+        "shadow",
+        "materialism",
+        "bondage",
+        "delusion"
+      ],
+      "essence": "Appreciating the luxuries that life has to offer",
+      "image": "/cards/m15.jpg"
+    },
+    {
+      "id": "m16",
+      "index": 30,
+      "name": "The Tower",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "16",
+      "keywords": [
+        "demolition",
+        "upheaval",
+        "deconstruction",
+        "disaster"
+      ],
+      "essence": "Breaking out of old, confining habits and mindsets",
+      "image": "/cards/m16.jpg"
+    },
+    {
+      "id": "m17",
+      "index": 31,
+      "name": "The Star",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "17",
+      "keywords": [
+        "hope",
+        "optimism",
+        "openness",
+        "certainty"
+      ],
+      "essence": "Hoping for the best",
+      "image": "/cards/m17.jpg"
+    },
+    {
+      "id": "m18",
+      "index": 32,
+      "name": "The Moon",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "18",
+      "keywords": [
+        "mystery",
+        "fantasy",
+        "imagination",
+        "dreams"
+      ],
+      "essence": "Enjoying healthy fantasies and daydreams",
+      "image": "/cards/m18.jpg"
+    },
+    {
+      "id": "m19",
+      "index": 33,
+      "name": "The Sun",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "19",
+      "keywords": [
+        "joy",
+        "brilliance",
+        "validation",
+        "attention"
+      ],
+      "essence": "Seeing things clearly",
+      "image": "/cards/m19.jpg"
+    },
+    {
+      "id": "m20",
+      "index": 34,
+      "name": "Judgement",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "20",
+      "keywords": [
+        "revival",
+        "renewal",
+        "resurrection",
+        "evaluation"
+      ],
+      "essence": "Receiving a wake-up call",
+      "image": "/cards/m20.jpg"
+    },
+    {
+      "id": "m21",
+      "index": 35,
+      "name": "The World",
+      "arcana": "Major Arcana",
+      "suit": "Trump",
+      "number": "21",
+      "keywords": [
+        "wholeness",
+        "integration",
+        "totality",
+        "completeness"
+      ],
+      "essence": "Having it all",
+      "image": "/cards/m21.jpg"
+    },
+    {
+      "id": "p01",
+      "index": 36,
+      "name": "Ace of Pentacles",
+      "arcana": "Minor Arcana",
+      "suit": "Pentacles",
+      "number": "1",
+      "keywords": [
+        "health",
+        "wealth",
+        "practicality",
+        "receiving"
+      ],
+      "essence": "Outlining a plan for achieving prosperity",
+      "image": "/cards/p01.jpg"
+    },
+    {
+      "id": "p02",
+      "index": 37,
+      "name": "Two of Pentacles",
+      "arcana": "Minor Arcana",
+      "suit": "Pentacles",
+      "number": "2",
+      "keywords": [
+        "evaluation",
+        "decision",
+        "budgeting",
+        "diagnosis"
+      ],
+      "essence": "Weighing options",
+      "image": "/cards/p02.jpg"
+    },
+    {
+      "id": "p03",
+      "index": 38,
+      "name": "Three of Pentacles",
+      "arcana": "Minor Arcana",
+      "suit": "Pentacles",
+      "number": "3",
+      "keywords": [
+        "expression",
+        "production",
+        "work",
+        "contribution"
+      ],
+      "essence": "Finishing a project",
+      "image": "/cards/p03.jpg"
+    },
+    {
+      "id": "p04",
+      "index": 39,
+      "name": "Four of Pentacles",
+      "arcana": "Minor Arcana",
+      "suit": "Pentacles",
+      "number": "4",
+      "keywords": [
+        "protection",
+        "conservation",
+        "preservation",
+        "safety"
+      ],
+      "essence": "Saving for a rainy day",
+      "image": "/cards/p04.jpg"
+    },
+    {
+      "id": "p05",
+      "index": 40,
+      "name": "Five of Pentacles",
+      "arcana": "Minor Arcana",
+      "suit": "Pentacles",
+      "number": "5",
+      "keywords": [
+        "poverty",
+        "destitution",
+        "need",
+        "crisis"
+      ],
+      "essence": "Recognizing your needs and taking action to fulfill them",
+      "image": "/cards/p05.jpg"
+    },
+    {
+      "id": "p06",
+      "index": 41,
+      "name": "Six of Pentacles",
+      "arcana": "Minor Arcana",
+      "suit": "Pentacles",
+      "number": "6",
+      "keywords": [
+        "charity",
+        "fairness",
+        "cooperation",
+        "sharing"
+      ],
+      "essence": "Giving time, money, or effort to a charity",
+      "image": "/cards/p06.jpg"
+    },
+    {
+      "id": "p07",
+      "index": 42,
+      "name": "Seven of Pentacles",
+      "arcana": "Minor Arcana",
+      "suit": "Pentacles",
+      "number": "7",
+      "keywords": [
+        "assessment",
+        "evaluation",
+        "re-evaluation",
+        "reflection"
+      ],
+      "essence": "Measuring progress toward your goal",
+      "image": "/cards/p07.jpg"
+    },
+    {
+      "id": "p08",
+      "index": 43,
+      "name": "Eight of Pentacles",
+      "arcana": "Minor Arcana",
+      "suit": "Pentacles",
+      "number": "8",
+      "keywords": [
+        "effort",
+        "work diligence",
+        "skill"
+      ],
+      "essence": "Doing your best",
+      "image": "/cards/p08.jpg"
+    },
+    {
+      "id": "p09",
+      "index": 44,
+      "name": "Nine of Pentacles",
+      "arcana": "Minor Arcana",
+      "suit": "Pentacles",
+      "number": "9",
+      "keywords": [
+        "training",
+        "discipline",
+        "confidence",
+        "enough"
+      ],
+      "essence": "Investing time in learning or teaching a difficult task",
+      "image": "/cards/p09.jpg"
+    },
+    {
+      "id": "p10",
+      "index": 45,
+      "name": "Ten of Pentacles",
+      "arcana": "Minor Arcana",
+      "suit": "Pentacles",
+      "number": "10",
+      "keywords": [
+        "wealth",
+        "abundance",
+        "acquisition",
+        "greed"
+      ],
+      "essence": "Celebrating your physical and financial blessings",
+      "image": "/cards/p10.jpg"
+    },
+    {
+      "id": "p11",
+      "index": 46,
+      "name": "Page of Pentacles",
+      "arcana": "Minor Arcana",
+      "suit": "Pentacles",
+      "number": "11",
+      "keywords": [
+        "practicality",
+        "prosperity",
+        "learning",
+        "growth"
+      ],
+      "essence": "Learning the value of a dollar",
+      "image": "/cards/p11.jpg"
+    },
+    {
+      "id": "p12",
+      "index": 47,
+      "name": "Knight of Pentacles",
+      "arcana": "Minor Arcana",
+      "suit": "Pentacles",
+      "number": "12",
+      "keywords": [
+        "caution",
+        "focus",
+        "realism",
+        "invention"
+      ],
+      "essence": "Spending money wisely",
+      "image": "/cards/p12.jpg"
+    },
+    {
+      "id": "p13",
+      "index": 48,
+      "name": "Queen of Pentacles",
+      "arcana": "Minor Arcana",
+      "suit": "Pentacles",
+      "number": "13",
+      "keywords": [
+        "luxury",
+        "comfort",
+        "resourcefulness",
+        "generosity"
+      ],
+      "essence": "Appreciating fine food, fine wine, beautiful art, beautiful bodies, or any of the better things in life",
+      "image": "/cards/p13.jpg"
+    },
+    {
+      "id": "p14",
+      "index": 49,
+      "name": "King of Pentacles",
+      "arcana": "Minor Arcana",
+      "suit": "Pentacles",
+      "number": "14",
+      "keywords": [
+        "stability",
+        "dependability",
+        "confidence",
+        "intervention"
+      ],
+      "essence": "Becoming debt-free",
+      "image": "/cards/p14.jpg"
+    },
+    {
+      "id": "s01",
+      "index": 50,
+      "name": "Ace of Swords",
+      "arcana": "Minor Arcana",
+      "suit": "Swords",
+      "number": "1",
+      "keywords": [
+        "logic",
+        "objectivity",
+        "intellect",
+        "choice"
+      ],
+      "essence": "Making objective decisions",
+      "image": "/cards/s01.jpg"
+    },
+    {
+      "id": "s02",
+      "index": 51,
+      "name": "Two of Swords",
+      "arcana": "Minor Arcana",
+      "suit": "Swords",
+      "number": "2",
+      "keywords": [
+        "denial",
+        "debate",
+        "impasse",
+        "truce"
+      ],
+      "essence": "Refusing to make a decision without getting the facts",
+      "image": "/cards/s02.jpg"
+    },
+    {
+      "id": "s03",
+      "index": 52,
+      "name": "Three of Swords",
+      "arcana": "Minor Arcana",
+      "suit": "Swords",
+      "number": "3",
+      "keywords": [
+        "variance",
+        "difference",
+        "dissatisfaction",
+        "heartache"
+      ],
+      "essence": "Being brave enough to see things as they really are",
+      "image": "/cards/s03.jpg"
+    },
+    {
+      "id": "s04",
+      "index": 53,
+      "name": "Four of Swords",
+      "arcana": "Minor Arcana",
+      "suit": "Swords",
+      "number": "4",
+      "keywords": [
+        "meditation",
+        "contemplation",
+        "perspective",
+        "mindset"
+      ],
+      "essence": "Thinking over your plans before putting them into action",
+      "image": "/cards/s04.jpg"
+    },
+    {
+      "id": "s05",
+      "index": 54,
+      "name": "Five of Swords",
+      "arcana": "Minor Arcana",
+      "suit": "Swords",
+      "number": "5",
+      "keywords": [
+        "selfishness",
+        "hostility",
+        "irrationality",
+        "self-preservation"
+      ],
+      "essence": "Acting in your own best interest",
+      "image": "/cards/s05.jpg"
+    },
+    {
+      "id": "s06",
+      "index": 55,
+      "name": "Six of Swords",
+      "arcana": "Minor Arcana",
+      "suit": "Swords",
+      "number": "6",
+      "keywords": [
+        "adaptation",
+        "adjustments",
+        "science",
+        "travel"
+      ],
+      "essence": "Making the best of a bad situation",
+      "image": "/cards/s06.jpg"
+    },
+    {
+      "id": "s07",
+      "index": 56,
+      "name": "Seven of Swords",
+      "arcana": "Minor Arcana",
+      "suit": "Swords",
+      "number": "7",
+      "keywords": [
+        "dishonesty",
+        "presumption",
+        "sneakiness",
+        "assumptions"
+      ],
+      "essence": "Refusing to do something dishonest, even when there's no chance of ever being caught",
+      "image": "/cards/s07.jpg"
+    },
+    {
+      "id": "s08",
+      "index": 57,
+      "name": "Eight of Swords",
+      "arcana": "Minor Arcana",
+      "suit": "Swords",
+      "number": "8",
+      "keywords": [
+        "restriction",
+        "limitation",
+        "confinement",
+        "helplessness"
+      ],
+      "essence": "Honoring limits",
+      "image": "/cards/s08.jpg"
+    },
+    {
+      "id": "s09",
+      "index": 58,
+      "name": "Nine of Swords",
+      "arcana": "Minor Arcana",
+      "suit": "Swords",
+      "number": "9",
+      "keywords": [
+        "remorse",
+        "worry",
+        "distraught",
+        "conclusion"
+      ],
+      "essence": "Refusing to worry about what you cannot control",
+      "image": "/cards/s09.jpg"
+    },
+    {
+      "id": "s10",
+      "index": 59,
+      "name": "Ten of Swords",
+      "arcana": "Minor Arcana",
+      "suit": "Swords",
+      "number": "10",
+      "keywords": [
+        "exhaustion",
+        "ruin",
+        "disaster",
+        "stamina"
+      ],
+      "essence": "Seeing the signs that you've reached your limits",
+      "image": "/cards/s10.jpg"
+    },
+    {
+      "id": "s11",
+      "index": 60,
+      "name": "Page of Swords",
+      "arcana": "Minor Arcana",
+      "suit": "Swords",
+      "number": "11",
+      "keywords": [
+        "student",
+        "apprentice",
+        "scholarship",
+        "information"
+      ],
+      "essence": "Pursuing a course of study",
+      "image": "/cards/s11.jpg"
+    },
+    {
+      "id": "s12",
+      "index": 61,
+      "name": "Knight of Swords",
+      "arcana": "Minor Arcana",
+      "suit": "Swords",
+      "number": "12",
+      "keywords": [
+        "bluntness",
+        "intelligence",
+        "incisiveness",
+        "investigation"
+      ],
+      "essence": "Speaking your mind",
+      "image": "/cards/s12.jpg"
+    },
+    {
+      "id": "s13",
+      "index": 62,
+      "name": "Queen of Swords",
+      "arcana": "Minor Arcana",
+      "suit": "Swords",
+      "number": "13",
+      "keywords": [
+        "grace",
+        "skill",
+        "wit",
+        "charm"
+      ],
+      "essence": "Exercising tact or using diplomacy",
+      "image": "/cards/s13.jpg"
+    },
+    {
+      "id": "s14",
+      "index": 63,
+      "name": "King of Swords",
+      "arcana": "Minor Arcana",
+      "suit": "Swords",
+      "number": "14",
+      "keywords": [
+        "genius",
+        "expertise",
+        "decision",
+        "verdict"
+      ],
+      "essence": "Expressing yourself with firmness and authority",
+      "image": "/cards/s14.jpg"
+    },
+    {
+      "id": "w01",
+      "index": 64,
+      "name": "Ace of Wands",
+      "arcana": "Minor Arcana",
+      "suit": "Wands",
+      "number": "1",
+      "keywords": [
+        "desire",
+        "inspiration",
+        "vision",
+        "creation"
+      ],
+      "essence": "Being inspired",
+      "image": "/cards/w01.jpg"
+    },
+    {
+      "id": "w02",
+      "index": 65,
+      "name": "Two of Wands",
+      "arcana": "Minor Arcana",
+      "suit": "Wands",
+      "number": "2",
+      "keywords": [
+        "conflict",
+        "decision",
+        "option",
+        "individuality"
+      ],
+      "essence": "Having a choice",
+      "image": "/cards/w02.jpg"
+    },
+    {
+      "id": "w03",
+      "index": 66,
+      "name": "Three of Wands",
+      "arcana": "Minor Arcana",
+      "suit": "Wands",
+      "number": "3",
+      "keywords": [
+        "implementation",
+        "action",
+        "exploration"
+      ],
+      "essence": "Putting a plan into motion",
+      "image": "/cards/w03.jpg"
+    },
+    {
+      "id": "w04",
+      "index": 67,
+      "name": "Four of Wands",
+      "arcana": "Minor Arcana",
+      "suit": "Wands",
+      "number": "4",
+      "keywords": [
+        "celebration",
+        "jubilation",
+        "community",
+        "teamwork"
+      ],
+      "essence": "Sharing in a great celebration",
+      "image": "/cards/w04.jpg"
+    },
+    {
+      "id": "w05",
+      "index": 68,
+      "name": "Five of Wands",
+      "arcana": "Minor Arcana",
+      "suit": "Wands",
+      "number": "5",
+      "keywords": [
+        "confrontation",
+        "disruption",
+        "distinction",
+        "objection"
+      ],
+      "essence": "Calmly expressing a dissenting opinion",
+      "image": "/cards/w05.jpg"
+    },
+    {
+      "id": "w06",
+      "index": 69,
+      "name": "Six of Wands",
+      "arcana": "Minor Arcana",
+      "suit": "Wands",
+      "number": "6",
+      "keywords": [
+        "victory",
+        "achievement",
+        "success",
+        "triumph"
+      ],
+      "essence": "Outperforming your peers",
+      "image": "/cards/w06.jpg"
+    },
+    {
+      "id": "w07",
+      "index": 70,
+      "name": "Seven of Wands",
+      "arcana": "Minor Arcana",
+      "suit": "Wands",
+      "number": "7",
+      "keywords": [
+        "bravery",
+        "resolve",
+        "determination"
+      ],
+      "essence": "Refusing to be silenced through fear or intimidation",
+      "image": "/cards/w07.jpg"
+    },
+    {
+      "id": "w08",
+      "index": 71,
+      "name": "Eight of Wands",
+      "arcana": "Minor Arcana",
+      "suit": "Wands",
+      "number": "8",
+      "keywords": [
+        "speed",
+        "swiftness",
+        "responsiveness",
+        "change"
+      ],
+      "essence": "Taking swift action",
+      "image": "/cards/w08.jpg"
+    },
+    {
+      "id": "w09",
+      "index": 72,
+      "name": "Nine of Wands",
+      "arcana": "Minor Arcana",
+      "suit": "Wands",
+      "number": "9",
+      "keywords": [
+        "toughness",
+        "persistence",
+        "stamina",
+        "loyalty"
+      ],
+      "essence": "Sticking with it for the duration",
+      "image": "/cards/w09.jpg"
+    },
+    {
+      "id": "w10",
+      "index": 73,
+      "name": "Ten of Wands",
+      "arcana": "Minor Arcana",
+      "suit": "Wands",
+      "number": "10",
+      "keywords": [
+        "exhaustion",
+        "resistance",
+        "burden",
+        "oppression"
+      ],
+      "essence": "Holding your own in extreme circumstances",
+      "image": "/cards/w10.jpg"
+    },
+    {
+      "id": "w11",
+      "index": 74,
+      "name": "Page of Wands",
+      "arcana": "Minor Arcana",
+      "suit": "Wands",
+      "number": "11",
+      "keywords": [
+        "enthusiasm",
+        "eagerness",
+        "confidence",
+        "validation"
+      ],
+      "essence": "Leaping at a new opportunity",
+      "image": "/cards/w11.jpg"
+    },
+    {
+      "id": "w12",
+      "index": 75,
+      "name": "Knight of Wands",
+      "arcana": "Minor Arcana",
+      "suit": "Wands",
+      "number": "12",
+      "keywords": [
+        "boldness",
+        "bravado",
+        "passion",
+        "persuasion"
+      ],
+      "essence": "Charging ahead",
+      "image": "/cards/w12.jpg"
+    },
+    {
+      "id": "w13",
+      "index": 76,
+      "name": "Queen of Wands",
+      "arcana": "Minor Arcana",
+      "suit": "Wands",
+      "number": "13",
+      "keywords": [
+        "attention",
+        "attraction",
+        "unification",
+        "collaboration"
+      ],
+      "essence": "Paying close attention",
+      "image": "/cards/w13.jpg"
+    },
+    {
+      "id": "w14",
+      "index": 77,
+      "name": "King of Wands",
+      "arcana": "Minor Arcana",
+      "suit": "Wands",
+      "number": "14",
+      "keywords": [
+        "creativity",
+        "ingenuity",
+        "achievement",
+        "direction"
+      ],
+      "essence": "Putting old things together in new and exciting ways",
+      "image": "/cards/w14.jpg"
+    }
+  ]
+}

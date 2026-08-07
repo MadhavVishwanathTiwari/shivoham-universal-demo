@@ -1,0 +1,132 @@
+<!doctype html>
+<!--
+  Standalone check that the instanced deck actually draws: same geometry merge,
+  same atlas UV patch, same flipY handling as src/components/hero/Deck.jsx.
+  There is no NextJS app in this repo yet, so this is how we see it render.
+
+  npx serve .   ->   http://localhost:3000/tools/smoke.html
+-->
+<meta charset="utf-8" />
+<title>deck smoke test</title>
+<style>
+  body { margin: 0; background: #0B0C10; }
+  #stats { position: fixed; top: 8px; left: 8px; font: 12px monospace; color: #D4AF37; }
+</style>
+<div id="stats">loading…</div>
+<script type="importmap">
+{ "imports": {
+  "three": "https://esm.sh/three@0.169.0",
+  "three/addons/": "https://esm.sh/three@0.169.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+const manifest = await (await fetch("/models/manifest.json")).json();
+const atlas = manifest.atlases[0];
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1);
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0b0c10);
+const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 0, 7);
+
+scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+const key = new THREE.DirectionalLight(0xffffff, 2.2);
+key.position.set(3, 6, 5);
+scene.add(key);
+
+const tex = (src) => new Promise((res) => new THREE.TextureLoader().load(src, (t) => {
+  t.flipY = false;                       // matches the GLB's UVs and the atlas packing
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
+  res(t);
+}));
+
+const [gltf, faceTex, backTex] = await Promise.all([
+  new GLTFLoader().loadAsync(manifest.model),
+  tex(atlas.src),
+  tex(manifest.back),
+]);
+
+// --- merge the 3 primitives into one grouped geometry (mirrors useCardGeometry)
+const order = ["face", "back", "rim"];
+const parts = [];
+gltf.scene.traverse((o) => o.isMesh && parts.push(o));
+parts.sort((a, b) => order.indexOf(a.material.name) - order.indexOf(b.material.name));
+
+const geom = new THREE.BufferGeometry();
+for (const n of ["position", "normal", "uv"]) {
+  geom.setAttribute(n, parts[0].geometry.getAttribute(n));
+}
+let start = 0;
+const idx = [];
+parts.forEach((p, i) => {
+  const a = p.geometry.getIndex().array;
+  idx.push(...a);
+  geom.addGroup(start, a.length, i);
+  start += a.length;
+});
+geom.setIndex(idx);
+geom.computeBoundingSphere();
+
+// --- per-instance atlas rect
+const uvRect = (i) => {
+  const [tw, th] = atlas.tile;
+  return [
+    ((i % atlas.cols) * tw) / atlas.width,
+    (Math.floor(i / atlas.cols) * th) / atlas.height,
+    tw / atlas.width,
+    th / atlas.height,
+  ];
+};
+const data = new Float32Array(manifest.cards.length * 4);
+manifest.cards.forEach((c) => data.set(uvRect(c.index), c.index * 4));
+geom.setAttribute("aUv", new THREE.InstancedBufferAttribute(data, 4));
+
+const [faceMat, backMat, rimMat] = parts.map((p) => p.material.clone());
+faceMat.map = faceTex;
+faceMat.onBeforeCompile = (shader) => {
+  shader.vertexShader = shader.vertexShader
+    .replace("#include <common>", "#include <common>\nattribute vec4 aUv;")
+    .replace("#include <uv_vertex>", "#include <uv_vertex>\n\tvMapUv = aUv.xy + vMapUv * aUv.zw;");
+};
+backMat.map = backTex;
+
+const count = manifest.cards.length;
+const deck = new THREE.InstancedMesh(geom, [faceMat, backMat, rimMat], count);
+deck.frustumCulled = false;
+scene.add(deck);
+
+// grid layout, faces toward camera so we can read the art
+const cols = 13, m = new THREE.Object3D();
+for (let i = 0; i < count; i++) {
+  m.position.set((i % cols) * 0.62 - 3.7, 2.4 - Math.floor(i / cols) * 1.06, 0);
+  m.rotation.set(0, 0, 0);
+  m.scale.setScalar(0.55);
+  m.updateMatrix();
+  deck.setMatrixAt(i, m.matrix);
+}
+deck.instanceMatrix.needsUpdate = true;
+
+renderer.render(scene, camera);
+
+const info = renderer.info;
+const stats = {
+  drawCalls: info.render.calls,
+  triangles: info.render.triangles,
+  textures: info.memory.textures,
+  geometries: info.memory.geometries,
+  instances: count,
+  atlas: `${atlas.width}x${atlas.height}`,
+  maxTextureSize: renderer.capabilities.maxTextureSize,
+  webgl2: renderer.capabilities.isWebGL2 !== false,
+};
+document.getElementById("stats").textContent = JSON.stringify(stats);
+window.__smoke = stats;
+</script>

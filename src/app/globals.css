@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+/*
+ * Hero design system. Tailwind v4 reads these at build time and emits the
+ * matching utilities, so `--color-astral-gold` here is what makes
+ * `text-astral-gold` / `border-astral-gold` exist.
+ *
+ * The font tokens indirect through --ff-*, which next/font sets on <html> in
+ * layout.tsx. Pointing --font-cinzel straight at the family name would fetch
+ * Cinzel from Google at runtime and shift the layout when it lands.
+ */
+@theme {
+  --color-void-black: #0b0c10;
+  --color-astral-gold: #d4af37;
+  --color-ethereal-gray: #1f2833;
+  --color-parchment-white: #f8f9fa;
+
+  --font-cinzel: var(--ff-cinzel), ui-serif, serif;
+  --font-inter: var(--ff-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-void-black);
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-void-black);
+    color: var(--color-parchment-white);
+    font-family: var(--font-inter);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* The hero is a fixed WebGL canvas; scrolling it sideways would tear the
+     scroll-linked gather animation off its rails. */
+  html,
+  body {
+    overflow-x: hidden;
+    overscroll-behavior-y: none;
+  }
+}
+
+@utility text-glow-gold {
+  text-shadow: 0 0 24px color-mix(in srgb, var(--color-astral-gold) 45%, transparent);
+}
+
+/* A hairline gold rule that fades out at both ends — used under the eyebrow
+   and as the scroll cue's stem. */
+@utility rule-astral {
+  background-image: linear-gradient(
+    to right,
+    transparent,
+    color-mix(in srgb, var(--color-astral-gold) 70%, transparent),
+    transparent
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
