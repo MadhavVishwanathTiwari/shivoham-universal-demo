@@ -268,23 +268,19 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 26, filter: "blur(10px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ delay: 0.1, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-              className="font-cinzel text-parchment-white text-glow-gold mt-5 text-[1.75rem] leading-[1.15] font-semibold text-balance sm:text-5xl md:mt-6 md:text-6xl"
+              className="font-cinzel text-parchment-white text-glow-gold mt-5 text-[1.4rem] leading-[1.15] font-semibold text-balance sm:text-4xl md:mt-6 md:text-5xl"
             >
-              For what keeps you awake —
-              {/* the line break is a composition choice, not a sentence break —
-                  on a phone the headline needs to reflow on its own */}
-              <br className="hidden sm:block" /> health, money, work, love
+              Unlock the answers written in your stars
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.35, duration: 0.9, ease: "easeOut" }}
-              className="font-inter text-parchment-white/55 mt-5 max-w-md text-sm text-pretty md:text-base"
+              className="font-inter text-parchment-white/55 mt-5 max-w-sm text-sm text-pretty md:text-base"
             >
-              {isMobile
-                ? "Tap a card to read it."
-                : "Move across the spread. Each card turns to meet you."}
+              Timeless insight for health, wealth, and relationships.{" "}
+              {isMobile ? "Tap your first card." : "Draw your first card."}
             </motion.p>
           </div>
         </div>

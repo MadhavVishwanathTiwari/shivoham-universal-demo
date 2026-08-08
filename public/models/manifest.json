@@ -20,8 +20,8 @@
         440
       ],
       "maxTextureSize": 4096,
-      "bytes": 1838268,
-      "bytesWebp": 2905992
+      "bytes": 1836113,
+      "bytesWebp": 2904708
     },
     {
       "src": "/textures/deck-1920.webp",
@@ -35,8 +35,8 @@
         274
       ],
       "maxTextureSize": 2048,
-      "bytes": 820187,
-      "bytesWebp": 1186514
+      "bytes": 821054,
+      "bytesWebp": 1187084
     }
   ],
   "cards": [

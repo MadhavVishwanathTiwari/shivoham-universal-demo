@@ -43,26 +43,33 @@ export default function PractitionerNote() {
             aria-hidden
             className="pointer-events-none absolute -inset-6 rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--color-nebula-violet)_30%,transparent),transparent_70%)] blur-2xl"
           />
-          <div className="surface-astral relative overflow-hidden">
-            <Image
-              src="/priya-portrait-room.webp"
-              alt={`${SITE.practitioner.name}, ${SITE.practitioner.title}`}
-              width={1000}
-              height={1333}
-              sizes="300px"
-              className="h-auto w-full"
-            />
-            {/*
-              The photograph is a warm, brightly lit room — mean luma ~149 —
-              dropped onto a near-black page. Untreated it reads as a lit
-              rectangle and out-shouts everything near it. This vignette sinks
-              the edges toward the page so only the centre keeps full
-              brightness, which is also where her face is.
-            */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0 bg-[radial-gradient(72%_58%_at_50%_36%,transparent,color-mix(in_srgb,var(--color-nebula-void)_80%,transparent))]"
-            />
+          <div className="surface-astral relative overflow-hidden border-astral-gold/25 p-2.5 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.6)]">
+            <div className="relative overflow-hidden rounded-[calc(var(--radius-astral)-0.4rem)]">
+              <Image
+                src="/priya-portrait-room.webp"
+                alt={`${SITE.practitioner.name}, ${SITE.practitioner.title}`}
+                width={1000}
+                height={1333}
+                sizes="300px"
+                className="h-auto w-full"
+              />
+              {/*
+                The photograph is a warm, brightly lit room — mean luma ~149 —
+                dropped onto a near-black page. Untreated it reads as a lit
+                rectangle and out-shouts everything near it. This vignette sinks
+                just the corners toward the page so the centre, including her
+                face, stays close to source brightness.
+
+                Ceiling dropped further (24%, from 42%) and the ellipse pulled
+                in tighter (78% 68%) after the previous pass still read as dim
+                across the lower two-thirds — the falloff now only reaches the
+                frame's own corners instead of eating most of the shot.
+              */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 bg-[radial-gradient(78%_68%_at_50%_38%,transparent,color-mix(in_srgb,var(--color-nebula-void)_24%,transparent))]"
+              />
+            </div>
           </div>
         </div>
 
