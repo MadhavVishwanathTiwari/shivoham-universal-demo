@@ -16,6 +16,9 @@ Usage: python tools/build_deck.py
 """
 
 import json
+import shutil
+import subprocess
+import tempfile
 from pathlib import Path
 
 from PIL import Image
@@ -36,12 +39,36 @@ TIERS = [
 ]
 BACK_SIZE = (512, 742)
 WEBP_QUALITY = 82
+AVIF_CRF = 28          # measured knee: ~37% under WebP q82 with cleaner linework
 KEYWORD_LIMIT = 4      # what a hover tooltip can show without wrapping to a wall
 
 
 def load_meta():
     data = json.loads((ROOT / "tarot-images.json").read_text(encoding="utf-8"))
     return {c["img"]: c for c in data["cards"]}
+
+
+def encode_avif(sheet, out):
+    """AVIF via ffmpeg — Pillow only speaks AVIF with a plugin, and shelling out
+    keeps the toolchain to one binary the repo already needs.
+
+    Every sheet ships in BOTH formats. AVIF is ~37% smaller and is what almost
+    every visitor gets, but a browser that cannot decode it would otherwise draw
+    78 black cards, so the WebP stays as the fallback the client falls back to.
+    """
+    if not shutil.which("ffmpeg"):
+        print(f"  ! ffmpeg not on PATH - skipping {out.name}, WebP fallback only")
+        return None
+    with tempfile.TemporaryDirectory() as tmp:
+        src = Path(tmp) / "sheet.png"
+        sheet.save(src)
+        subprocess.run(
+            ["ffmpeg", "-y", "-v", "error", "-i", str(src),
+             "-c:v", "libaom-av1", "-still-picture", "1", "-cpu-used", "6",
+             "-crf", str(AVIF_CRF), "-pix_fmt", "yuv420p", str(out)],
+            check=True,
+        )
+    return out
 
 
 def build_atlas(images, label, cols, rows, tw, th):
@@ -54,7 +81,8 @@ def build_atlas(images, label, cols, rows, tw, th):
         sheet.paste(tile, ((i % cols) * tw, (i // cols) * th))
     out = TEXTURES / f"{label}.webp"
     sheet.save(out, "WEBP", quality=WEBP_QUALITY, method=6)
-    return out, sheet.size
+    avif = encode_avif(sheet, TEXTURES / f"{label}.avif")
+    return out, avif, sheet.size
 
 
 def main():
@@ -69,22 +97,28 @@ def main():
     back = Image.open(CARDS / "backside.jfif").convert("RGB")
     back = back.resize(BACK_SIZE, Image.LANCZOS)
     back.save(TEXTURES / "back.webp", "WEBP", quality=WEBP_QUALITY, method=6)
-    back_bytes = (TEXTURES / "back.webp").stat().st_size
+    back_avif = encode_avif(back, TEXTURES / "back.avif")
+    back_bytes = (back_avif or TEXTURES / "back.webp").stat().st_size
 
     atlases, base = [], mesh_bytes + back_bytes
     for label, cols, rows, tw, th, limit in TIERS:
-        path, (w, h) = build_atlas(faces, label, cols, rows, tw, th)
+        path, avif, (w, h) = build_atlas(faces, label, cols, rows, tw, th)
         size = path.stat().st_size
+        avif_size = avif.stat().st_size if avif else 0
         atlases.append({
             "src": f"/textures/{label}.webp",
+            "srcAvif": f"/textures/{label}.avif" if avif else None,
             "width": w, "height": h,
             "cols": cols, "rows": rows,
             "tile": [tw, th],
             "maxTextureSize": limit,
-            "bytes": size,
+            # what a visitor actually downloads: AVIF where supported, else WebP
+            "bytes": avif_size or size,
+            "bytesWebp": size,
         })
         vram = w * h * 4 * 1.33 / 1024 ** 2
-        print(f"{label:11} {w}x{h}  {size/1024:6.0f} KB file  ~{vram:5.1f} MB VRAM")
+        saved = f"  avif {avif_size/1024:5.0f} KB (-{100*(1-avif_size/size):.0f}%)" if avif else ""
+        print(f"{label:11} {w}x{h}  webp {size/1024:6.0f} KB{saved}  ~{vram:5.1f} MB VRAM")
 
     cards = []
     for i, path in enumerate(faces):
@@ -108,6 +142,7 @@ def main():
     manifest = {
         "model": "/models/card.glb",
         "back": "/textures/back.webp",
+        "backAvif": "/textures/back.avif" if back_avif else None,
         "cardSize": [CARD_W, round(CARD_H, 6), CARD_T],
         "atlases": atlases,
         "cards": cards,

@@ -54,11 +54,20 @@ def check_glb(path):
     return g
 
 
-def check_atlas(atlas, cards):
-    sheet = Image.open(TEXTURES / Path(atlas["src"]).name).convert("RGB")
-    check(f"{atlas['src']} dimensions",
+def check_atlas(atlas, cards, src_key="src"):
+    # Both encodings of a sheet are checked: the client picks between them at
+    # runtime, so an AVIF that is missing or packed a slot off would black out
+    # the deck for nearly every visitor while the WebP still looked fine here.
+    src = atlas[src_key]
+    if src is None:
+        check(f"{atlas['src']} avif twin", False,
+              "missing - build ran without ffmpeg on PATH")
+        return
+
+    sheet = Image.open(TEXTURES / Path(src).name).convert("RGB")
+    check(f"{src} dimensions",
           sheet.size == (atlas["width"], atlas["height"]), str(sheet.size))
-    check(f"{atlas['src']} fits its tier",
+    check(f"{src} fits its tier",
           max(sheet.size) <= atlas["maxTextureSize"],
           f"limit {atlas['maxTextureSize']}")
 
@@ -95,10 +104,10 @@ def check_atlas(atlas, cards):
         if ratio > NEIGHBOUR_RATIO:
             swapped.append(card["id"])
 
-    check(f"{atlas['src']} sub-pixel alignment", not shifted,
+    check(f"{src} sub-pixel alignment", not shifted,
           f"{len(shifted)} tiles beaten by a shifted crop" if shifted
           else "every tile beats its +/-1px shifts")
-    check(f"{atlas['src']} tile identity", not swapped,
+    check(f"{src} tile identity", not swapped,
           f"worst self/neighbour MSE ratio {worst_ratio:.3f}, limit {NEIGHBOUR_RATIO}")
 
 
@@ -117,11 +126,13 @@ def main():
 
     print("\natlases")
     for atlas in manifest["atlases"]:
-        check_atlas(atlas, cards)
+        for key in ("src", "srcAvif"):
+            check_atlas(atlas, cards, key)
 
     print("\nbackside")
     strays = sorted(p.name for p in MODELS.glob("*.glb") if p.name != "card.glb")
     check("backside exists once", (TEXTURES / "back.webp").exists())
+    check("backside avif twin", (TEXTURES / "back.avif").exists())
     check("no stale per-card GLBs", not strays,
           f"{len(strays)} left" if strays else "")
 

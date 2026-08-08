@@ -11,6 +11,8 @@ import manifestJson from "../../../public/models/manifest.json";
 
 export interface Atlas {
   src: string;
+  /** null when the build ran without ffmpeg — callers must fall back to `src`. */
+  srcAvif: string | null;
   width: number;
   height: number;
   cols: number;
@@ -18,6 +20,7 @@ export interface Atlas {
   tile: [number, number];
   maxTextureSize: number;
   bytes: number;
+  bytesWebp: number;
 }
 
 export interface TarotCard {
@@ -35,6 +38,7 @@ export interface TarotCard {
 interface Manifest {
   model: string;
   back: string;
+  backAvif: string | null;
   cardSize: [number, number, number];
   atlases: Atlas[];
   cards: TarotCard[];
@@ -114,4 +118,38 @@ export function pickAtlas(maxTextureSize: number): Atlas {
   return usable.reduce((best, a) =>
     a.maxTextureSize > best.maxTextureSize ? a : best,
   );
+}
+
+/**
+ * Every sheet ships as AVIF (~37% smaller) with a WebP twin. Support cannot be
+ * probed synchronously, so the probe is a module-level promise: it starts the
+ * moment this module is imported and has settled long before the R3F canvas
+ * mounts. `useDeckTexture` suspends on it inside the Suspense boundary that
+ * `useLoader` already needs, so it costs no extra round trip.
+ *
+ * Guessing wrong is not a graceful degradation — a browser that cannot decode
+ * AVIF draws 78 black cards — so this decodes an actual AVIF rather than
+ * sniffing the user agent.
+ */
+const AVIF_PROBE =
+  "data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAAD5bWV0YQAAAAAA" +
+  "AAAvaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAFBpY3R1cmVIYW5kbGVyAAAAAA5waXRtAAAAAAABAAAA" +
+  "Hmlsb2MAAAAARAAAAQABAAAAAQAAASEAAAAUAAAAKGlpbmYAAAAAAAEAAAAaaW5mZQIAAAAAAQAAYXYwMUNv" +
+  "bG9yAAAAAGppcHJwAAAAS2lwY28AAAAUaXNwZQAAAAAAAAACAAAAAgAAABBwaXhpAAAAAAMICAgAAAAMYXYx" +
+  "Q4EADAAAAAATY29scm5jbHgAAgACAAIAAAAAF2lwbWEAAAAAAAAAAQABBAECgwQAAAAcbWRhdAoFGAA2wCAy" +
+  "Cx/wAABYAAAAAK8w";
+
+export const avifSupported: Promise<boolean> =
+  typeof Image === "undefined"
+    ? Promise.resolve(false) // SSR: the deck only ever loads in the browser
+    : new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(img.width === 2);
+        img.onerror = () => resolve(false);
+        img.src = AVIF_PROBE;
+      });
+
+/** AVIF twin when the browser can decode it and the build produced one. */
+export function preferAvif(webp: string, avif: string | null, ok: boolean) {
+  return ok && avif ? avif : webp;
 }

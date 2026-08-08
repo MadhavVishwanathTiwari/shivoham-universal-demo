@@ -26,3 +26,7 @@ next-env.d.ts
 
 # python tool cache
 tools/__pycache__/
+
+# full-resolution card masters (~7 MB each). The tracked source of truth is the
+# 350x600 set in cards/, which is all tools/build_deck.py consumes.
+watermark-removed-*.png

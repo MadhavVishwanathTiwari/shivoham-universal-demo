@@ -1,7 +1,13 @@
-import { useMemo } from "react";
+import { use, useMemo } from "react";
 import { useLoader, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { MANIFEST, pickAtlas, type Atlas } from "./cardData";
+import {
+  MANIFEST,
+  avifSupported,
+  pickAtlas,
+  preferAvif,
+  type Atlas,
+} from "./cardData";
 
 export interface DeckTextures {
   atlas: Atlas;
@@ -24,7 +30,11 @@ export function useDeckTexture(): DeckTextures {
   const maxAniso = gl.capabilities.getMaxAnisotropy();
 
   const atlas = useMemo(() => pickAtlas(maxSize), [maxSize]);
-  const [face, back] = useLoader(THREE.TextureLoader, [atlas.src, MANIFEST.back]);
+  const avif = use(avifSupported);
+  const [face, back] = useLoader(THREE.TextureLoader, [
+    preferAvif(atlas.src, atlas.srcAvif, avif),
+    preferAvif(MANIFEST.back, MANIFEST.backAvif, avif),
+  ]);
 
   return useMemo(() => {
     for (const tex of [face, back]) {

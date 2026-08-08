@@ -49,22 +49,46 @@ export default function HeroSection() {
   const inspecting = isMobile && selected !== null;
 
   /*
-   * The section is 200svh with a pinned 100svh stage, so the gather animation
-   * plays across a full screen of scrolling instead of sliding away while it
-   * runs. "end end" puts progress = 1 exactly where the stage unpins.
+   * The gather phase. "end end" puts progress = 1 exactly where the stage
+   * unpins, so this range covers only the pinned scrolling.
+   *
+   * The section is shorter on desktop (150svh, so 50svh of pin) than on mobile
+   * (200svh, 100svh of pin). Desktop pointers scroll in much larger increments
+   * than a thumb does, and a full screen of pinned scrolling there reads as the
+   * page being stuck rather than as an animation being played.
    */
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
 
+  /*
+   * The exit phase: 0 where the stage unpins, 1 where the section has fully
+   * left the viewport. This is a separate scroll range because it covers the
+   * stage's own height scrolling past, which `scrollYProgress` above has
+   * already finished measuring.
+   *
+   * It exists to kill a full screen of dead black. A sticky 100svh stage still
+   * takes 100svh of scrolling to clear after it unpins, so fading the canvas
+   * out by the end of the gather left the deck invisible for that entire
+   * stretch while the next section crawled up from the bottom. Fading across
+   * the exit instead means the deck is still on screen as the content arrives,
+   * and the two cross over instead of being separated by a void.
+   */
+  const { scrollYProgress: exitProgress } = useScroll({
+    target: sectionRef,
+    offset: ["end end", "end start"],
+  });
+
   // Read as data inside useFrame — that path is unaffected by the DOM issue
   // useScrollStyle exists to work around.
   const gather = useTransform(scrollYProgress, [0, 0.7], [0, 1]);
 
-  // The canvas holds until the deck has re-stacked, then goes.
-  const stageRef = useScrollStyle<HTMLDivElement>(scrollYProgress, (el, p) => {
-    el.style.opacity = String(mapRange(p, 0.74, 1, 1, 0));
+  // Holds at full opacity through the whole gather, then goes as the section
+  // scrolls away. Ends well before the exit completes so the last stretch is
+  // clean content rather than a ghost of the deck.
+  const stageRef = useScrollStyle<HTMLDivElement>(exitProgress, (el, p) => {
+    el.style.opacity = String(mapRange(p, 0, 0.55, 1, 0));
   });
   const copyRef = useScrollStyle<HTMLDivElement>(scrollYProgress, (el, p) => {
     el.style.opacity = String(mapRange(p, 0, 0.28, 1, 0));
@@ -167,11 +191,19 @@ export default function HeroSection() {
     : {};
 
   return (
-    <section ref={sectionRef} className="bg-void-black relative h-[200svh]">
+    <section
+      ref={sectionRef}
+      className="bg-void-black relative h-[200svh] md:h-[150svh]"
+    >
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden">
         <motion.div {...panProps} className="absolute inset-0">
           <div ref={stageRef} className="h-full w-full">
-            <HeroCanvas interactive={!isMobile && hovered !== null}>
+            <HeroCanvas
+              interactive={!isMobile && hovered !== null}
+              gather={gather}
+              isMobile={isMobile}
+              reducedMotion={reducedMotion}
+            >
               <TarotDeck3D
                 activeIndex={activeIndex}
                 onHover={setHovered}
@@ -187,10 +219,25 @@ export default function HeroSection() {
           </div>
         </motion.div>
 
-        {/* A gold wash bottom-left, so the void has some depth behind the deck */}
+        {/*
+          Two full-bleed tints over the canvas. `pointer-events-none` on both is
+          load-bearing, not hygiene: every deck interaction is an R3F pointer
+          event on the canvas underneath, so a full-bleed div without it would
+          swallow all of them.
+
+          A gold wash bottom-left, so the void has some depth behind the deck...
+        */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(60%_50%_at_50%_115%,rgba(212,175,55,0.12),transparent_70%)]"
+        />
+        {/* ...then the vignette last, so it is the outermost tint and knocks
+            back the wash's bottom corners along with everything else. It needs
+            no scroll fade: past p=0.74 the stage fades to bg-void-black and both
+            of these are invisible against it. */}
+        <div
+          aria-hidden
+          className="vignette-nebula pointer-events-none absolute inset-0 z-10"
         />
 
         {/* ---------------------------------------------------------- copy */}
@@ -223,10 +270,10 @@ export default function HeroSection() {
               transition={{ delay: 0.1, duration: 1, ease: [0.22, 1, 0.36, 1] }}
               className="font-cinzel text-parchment-white text-glow-gold mt-5 text-[1.75rem] leading-[1.15] font-semibold text-balance sm:text-5xl md:mt-6 md:text-6xl"
             >
-              Seventy-eight archetypes,
+              For what keeps you awake —
               {/* the line break is a composition choice, not a sentence break —
                   on a phone the headline needs to reflow on its own */}
-              <br className="hidden sm:block" /> rendered in three dimensions
+              <br className="hidden sm:block" /> health, money, work, love
             </motion.h1>
 
             <motion.p

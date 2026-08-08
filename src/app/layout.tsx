@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cinzel, Inter } from "next/font/google";
+import SiteHeader from "@/components/site/SiteHeader";
+import SiteFooter from "@/components/site/SiteFooter";
 import "./globals.css";
 
 // Self-hosted by next/font. The CSS variables are consumed by the --font-*
@@ -17,10 +19,23 @@ const inter = Inter({
   display: "swap",
 });
 
+/*
+ * The old description ("Seventy-eight archetypes rendered in three
+ * dimensions") described the hero, not the business — a lovely line and a
+ * useless search snippet for a consultancy. Replaced.
+ *
+ * TODO(seo): metadataBase needs the real production origin before launch —
+ * without it every Open Graph image URL resolves relative and breaks on every
+ * social platform. Left unset rather than guessed, since a wrong absolute
+ * origin is worse than none.
+ */
 export const metadata: Metadata = {
-  title: "Shivoham Universal Sol",
+  title: {
+    default: "Shivoham Universal Sol | Vastu, Numerology & Tarot Consultancy",
+    template: "%s · Shivoham Universal Sol",
+  },
   description:
-    "Seventy-eight archetypes rendered in three dimensions. Draw one.",
+    "Vastu, numerology, tarot and relationship guidance from Priya Swaroop Tripathi. Practical remedies for health, work, money and relationships. Consultations held remotely, worldwide.",
 };
 
 export const viewport: Viewport = {
@@ -34,7 +49,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cinzel.variable} ${inter.variable}`}>
       <body className="bg-void-black text-parchment-white font-inter antialiased">
+        {/*
+          Fixed, so it adds no layout height here — every page's own Section
+          reserves the space for it (see the invariant in Section.tsx). The
+          hero deliberately opts out and renders full-bleed underneath it.
+        */}
+        <SiteHeader />
         {children}
+        <SiteFooter />
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 {
   "model": "/models/card.glb",
   "back": "/textures/back.webp",
+  "backAvif": "/textures/back.avif",
   "cardSize": [
     1.0,
     1.714286,
@@ -9,6 +10,7 @@
   "atlases": [
     {
       "src": "/textures/deck-3328.webp",
+      "srcAvif": "/textures/deck-3328.avif",
       "width": 3328,
       "height": 2640,
       "cols": 13,
@@ -18,10 +20,12 @@
         440
       ],
       "maxTextureSize": 4096,
-      "bytes": 2962200
+      "bytes": 1838268,
+      "bytesWebp": 2905992
     },
     {
       "src": "/textures/deck-1920.webp",
+      "srcAvif": "/textures/deck-1920.avif",
       "width": 1920,
       "height": 1918,
       "cols": 12,
@@ -31,7 +35,8 @@
         274
       ],
       "maxTextureSize": 2048,
-      "bytes": 1185522
+      "bytes": 820187,
+      "bytesWebp": 1186514
     }
   ],
   "cards": [
