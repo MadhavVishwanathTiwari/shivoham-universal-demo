@@ -141,7 +141,7 @@ export const SITE = {
   },
 
   socials: {
-    instagram: "https://www.instagram.com/priyaa_tripathii/",
+    instagram: "https://www.instagram.com/priyaswarooptripathi/",
     facebook:
       "https://www.facebook.com/profile.php?id=100021775871823",
     linkedin: "http://linkedin.com/in/priya-tripathi-727b6923",

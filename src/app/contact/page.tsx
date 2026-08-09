@@ -38,9 +38,22 @@ const METHODS = [
     /* Drawn inline rather than pulled from an icon package. Three glyphs do not
        justify a dependency, and these are stroked to match the gold hairlines
        already on the page — an icon set's filled shapes would sit on this
-       palette like stickers. */
+       palette like stickers.
+
+       Hand-drawn glyphs share no common grid, so they have to be fitted to one
+       by hand. The rule for all three: ink centred on (12, 12) of the viewBox,
+       ink height ~15 units. The flexbox centres the 18px svg BOX on the label,
+       so any offset between the box and the ink inside it lands on screen as a
+       misaligned icon — and only the ink is visible.
+
+       This one was the outlier: 17.1 units tall (vs the phone's 15) and centred
+       at y=12.43, which rendered it 12.9px against a 9px cap height. It
+       overshot the text band top and bottom and was the one glyph that broke
+       the row. Rebuilt on the same construction — bubble r=7.1 at (12.4,
+       11.75), tail tip at the same angle and radius ratio as before — giving
+       ink of 14.9 x 14.7 centred on (12.08, 11.98). */
     icon: (
-      <path d="M3 21l1.7-5A8.3 8.3 0 1 1 8 19.4L3 21zM9 8.5c-.4 1 .1 2.3 1 3.3s2.3 1.6 3.3 1.2l1.2 1.2c-.6.8-1.9 1-3 .6a8 8 0 0 1-4.3-4.3c-.4-1.1-.2-2.4.6-3L9 8.5z" />
+      <path d="M4.65 19.31l1.46-4.27A7.1 7.1 0 1 1 8.93 17.94L4.65 19.31zM9.78 8.62c-.34.86.09 1.97.86 2.82s1.97 1.37 2.82 1.03l1.03 1.03c-.51.68-1.63.86-2.57.51a6.84 6.84 0 0 1-3.68-3.68c-.34-.94-.17-2.05.51-2.57L9.78 8.62z" />
     ),
   },
   {
