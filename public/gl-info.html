@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GL precision probe</title>
+<style>
+  :root { color-scheme: dark; }
+  body {
+    margin: 0; padding: 16px 16px 48px;
+    background: #0b0c10; color: #f8f9fa;
+    font: 13px/1.5 system-ui, sans-serif;
+  }
+  h1 { font-size: 15px; margin: 0 0 4px; letter-spacing: .04em; }
+  p.hint { margin: 0 0 18px; color: #9aa0a6; font-size: 12px; }
+  h2 { font-size: 12px; margin: 22px 0 6px; color: #d4af37; letter-spacing: .12em; text-transform: uppercase; }
+  .strip { width: 100%; height: 132px; display: block; border-radius: 6px; }
+  /* Same ramp the hero's vignette runs: rgba(10,8,20,0) -> 0.72 over a dark
+     indigo ground. If THIS bands and the canvas strips do not, the problem is
+     CSS gradient rasterization, not the WebGL buffer. */
+  .css-strip {
+    background-color: #1a1440;
+    background-image: linear-gradient(to bottom, rgba(10,8,20,0), rgba(10,8,20,.72));
+  }
+  table { border-collapse: collapse; width: 100%; margin-top: 6px; }
+  td { padding: 3px 6px 3px 0; vertical-align: top; font-family: ui-monospace, monospace; font-size: 12px; }
+  td:first-child { color: #9aa0a6; white-space: nowrap; }
+  .verdict { margin-top: 10px; padding: 10px 12px; border-radius: 6px; font-size: 12px; }
+  .ok   { background: #10331d; color: #b7f0c8; }
+  .bad  { background: #3a1518; color: #ffc9cd; }
+</style>
+</head>
+<body>
+
+<h1>Hero backdrop precision probe</h1>
+<p class="hint">
+  Look at the three strips below in a dark room, at the brightness you normally
+  use. You are looking for horizontal contour lines / stepping, not for colour.
+  Which strips band tells us where the hero's wave-shaped seam comes from.
+</p>
+
+<h2>1 — CSS gradient</h2>
+<div class="strip css-strip"></div>
+<p class="hint">Bands here &rarr; the CSS vignette over the hero is the cause.</p>
+
+<h2>2 — WebGL, no dither</h2>
+<canvas class="strip" id="raw"></canvas>
+<p class="hint">Bands here but not in 1 &rarr; the canvas buffer is low precision.</p>
+
+<h2>3 — WebGL, dithered</h2>
+<canvas class="strip" id="dithered"></canvas>
+<p class="hint">If 3 is clean and 2 is not, raising the shader's dither fixes it.</p>
+
+<h2>Context</h2>
+<table id="info"></table>
+<div id="verdict"></div>
+
+<script>
+(function () {
+  var rows = [];
+  function add(k, v) { rows.push([k, String(v)]); }
+
+  // Same attributes the hero's Canvas asks for, so this measures what the hero
+  // actually gets rather than what a default context would get.
+  var attrs = { antialias: true, alpha: false, powerPreference: "high-performance" };
+
+  function makeGL(canvas) {
+    canvas.width = Math.floor(canvas.clientWidth * Math.min(devicePixelRatio, 2));
+    canvas.height = Math.floor(canvas.clientHeight * Math.min(devicePixelRatio, 2));
+    return canvas.getContext("webgl2", attrs) || canvas.getContext("webgl", attrs);
+  }
+
+  var VERT = "attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}";
+  function frag(dither) {
+    return [
+      "precision highp float;",
+      "uniform vec2 uRes;",
+      "float hash21(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}",
+      "void main(){",
+      "  float t = gl_FragCoord.y / uRes.y;",
+      // Same two colours the nebula mixes between, so the ramp is representative.
+      "  vec3 c = mix(vec3(0.0392,0.0314,0.0784), vec3(0.102,0.078,0.251), t);",
+      dither ? "  c += (hash21(gl_FragCoord.xy) - 0.5) * 0.0392;" : "",
+      "  gl_FragColor = vec4(c,1.0);",
+      "}"
+    ].join("\n");
+  }
+
+  function draw(canvas, dither) {
+    var gl = makeGL(canvas);
+    if (!gl) { canvas.replaceWith(Object.assign(document.createElement("div"), { textContent: "no WebGL", className: "strip" })); return null; }
+    function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; }
+    var prog = gl.createProgram();
+    gl.attachShader(prog, sh(gl.VERTEX_SHADER, VERT));
+    gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, frag(dither)));
+    gl.linkProgram(prog); gl.useProgram(prog);
+    var buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+    var loc = gl.getAttribLocation(prog, "p");
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    gl.uniform2f(gl.getUniformLocation(prog, "uRes"), canvas.width, canvas.height);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    return gl;
+  }
+
+  draw(document.getElementById("dithered"), true);
+  var gl = draw(document.getElementById("raw"), false);
+
+  if (gl) {
+    var r = gl.getParameter(gl.RED_BITS),
+        g = gl.getParameter(gl.GREEN_BITS),
+        b = gl.getParameter(gl.BLUE_BITS);
+    add("colour bits (R,G,B)", r + ", " + g + ", " + b);
+    add("depth / stencil bits", gl.getParameter(gl.DEPTH_BITS) + " / " + gl.getParameter(gl.STENCIL_BITS));
+    add("WebGL version", gl.getParameter(gl.VERSION));
+    add("max texture size", gl.getParameter(gl.MAX_TEXTURE_SIZE));
+    var ext = gl.getExtension("WEBGL_debug_renderer_info");
+    if (ext) {
+      add("GPU vendor", gl.getParameter(ext.UNMASKED_VENDOR_WEBGL));
+      add("GPU renderer", gl.getParameter(ext.UNMASKED_RENDERER_WEBGL));
+    }
+    var a = gl.getContextAttributes() || {};
+    add("antialias / alpha", a.antialias + " / " + a.alpha);
+    var v = document.getElementById("verdict");
+    if (r < 8 || g < 8 || b < 8) {
+      v.className = "verdict bad";
+      v.textContent = "Low-precision buffer: " + r + "/" + g + "/" + b + " bits instead of 8/8/8. This alone will band the nebula into wavy contours, and the shader's current 1/255 dither is far too small to hide steps this large.";
+    } else {
+      v.className = "verdict ok";
+      v.textContent = "Buffer is full 8/8/8. If strip 2 still bands for you, it is the display resolving 1/255 steps (common on OLED) rather than the buffer — the fix is more dither, in both the shader and the CSS vignette.";
+    }
+  }
+
+  add("devicePixelRatio", devicePixelRatio);
+  add("viewport", innerWidth + " x " + innerHeight);
+  add("screen", screen.width + " x " + screen.height);
+  add("colour gamut", ["srgb","p3","rec2020"].filter(function (x) { return matchMedia("(color-gamut:" + x + ")").matches; }).join(", ") || "unknown");
+  add("dynamic range", matchMedia("(dynamic-range: high)").matches ? "high" : "standard");
+  add("user agent", navigator.userAgent);
+
+  document.getElementById("info").innerHTML = rows.map(function (kv) {
+    return "<tr><td>" + kv[0] + "</td><td>" + kv[1].replace(/[<>&]/g, "") + "</td></tr>";
+  }).join("");
+})();
+</script>
+
+</body>
+</html>
