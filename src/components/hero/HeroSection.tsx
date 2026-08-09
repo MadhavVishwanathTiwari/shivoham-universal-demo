@@ -49,15 +49,6 @@ export default function HeroSection() {
   /** A card is being read on a phone: the sheet is up and the copy gets out. */
   const inspecting = isMobile && selected !== null;
 
-  /**
-   * The headline's entrance is done, so its compositor layer can be released.
-   * `will-change` is a promise about the *future*; leaving it on a text node
-   * that carries a 24px text-shadow keeps a raster layer alive for the life of
-   * the page to buy nothing — the same trap .invite-hint documents in
-   * globals.css.
-   */
-  const [headlineSettled, setHeadlineSettled] = useState(false);
-
   /*
    * The gather phase. "end end" puts progress = 1 exactly where the stage
    * unpins, so this range covers only the pinned scrolling.
@@ -135,6 +126,17 @@ export default function HeroSection() {
   // Stops the auto-open. Held in a ref rather than state so a gesture can take
   // the fan over mid-flight without re-rendering the canvas under the finger.
   const stopOpening = useRef<(() => void) | null>(null);
+  /**
+   * Whether the current gesture has been resolved as a horizontal drag and has
+   * taken ownership of `fan`.
+   *
+   * Framer fires onPanStart/onPanEnd for *any* pan, and a vertical swipe on a
+   * phone is the page scrolling. Only onPan distinguished them, so the other two
+   * acted on scrolls: onPanStart cancelled the auto-open and onPanEnd then
+   * snapped `fan` to 0. Scroll hard within OPEN_DELAY of load and the deck stayed
+   * stacked for the rest of the session, with the bare nebula behind it.
+   */
+  const fanTakeover = useRef(false);
 
   useEffect(() => {
     if (!isMobile) return;
@@ -158,15 +160,24 @@ export default function HeroSection() {
     return cancel;
   }, [fan, isMobile, reducedMotion]);
 
+  // Deliberately touches neither the auto-open nor `fan`: at this point the
+  // gesture could still be a vertical scroll. The takeover happens in handlePan,
+  // the only handler that knows the direction.
   const handlePanStart = useCallback(() => {
-    stopOpening.current?.();
-    fanAtStart.current = fan.get();
-  }, [fan]);
+    fanTakeover.current = false;
+  }, []);
 
   const handlePan = useCallback(
     (_: PointerEvent, info: PanInfo) => {
       // A vertical swipe is the page scrolling, not the deck fanning.
       if (Math.abs(info.offset.x) <= Math.abs(info.offset.y)) return;
+      if (!fanTakeover.current) {
+        fanTakeover.current = true;
+        stopOpening.current?.();
+        // Captured here rather than at onPanStart: the auto-open may have been
+        // mid-flight until this instant, so the value at gesture start is stale.
+        fanAtStart.current = fan.get();
+      }
       didPan.current = true;
       const travel = window.innerWidth * FAN_TRAVEL;
       fan.set(clamp01(fanAtStart.current + info.offset.x / travel));
@@ -176,6 +187,11 @@ export default function HeroSection() {
 
   const handlePanEnd = useCallback(
     (_: PointerEvent, info: PanInfo) => {
+      // The gesture never became a horizontal drag, so it was a scroll — leave
+      // `fan` alone. Settling it here is what turned a flick of the page into a
+      // deck that closed itself.
+      if (!fanTakeover.current) return;
+      fanTakeover.current = false;
       const target =
         info.velocity.x > FLICK_VELOCITY
           ? 1
@@ -307,13 +323,12 @@ export default function HeroSection() {
                 ease: [0.22, 1, 0.36, 1],
                 filter: { delay: 0.1, duration: 0.45, ease: "easeOut" },
               }}
-              onAnimationComplete={() => setHeadlineSettled(true)}
-              /* All three animating properties, not just filter: naming only
-                 filter would replace the will-change Framer sets for the
-                 transform/opacity pair and deoptimize them. */
-              style={{
-                willChange: headlineSettled ? "auto" : "filter, transform, opacity",
-              }}
+              /* No will-change here, deliberately. Promoting this to its own
+                 compositor layer sat a filtered text layer directly under the
+                 header's backdrop-blur and over the WebGL canvas, and on Android
+                 that stack rasterized as white bands across the header and the
+                 headline. The duration cut above is where the win actually was;
+                 the layer promotion was a rounding error next to it. */
               className="font-cinzel text-parchment-white text-glow-gold mt-5 text-[1.4rem] leading-[1.15] font-semibold text-balance sm:text-4xl md:mt-6 md:text-5xl"
             >
               Unlock the answers written in your stars

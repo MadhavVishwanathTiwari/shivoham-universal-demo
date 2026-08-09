@@ -6,6 +6,7 @@ import { Environment, Lightformer, Preload } from "@react-three/drei";
 import type { MotionValue } from "framer-motion";
 import * as THREE from "three";
 import NebulaBackground from "./NebulaBackground";
+import DeckBoundary from "./DeckBoundary";
 
 /** Matches --color-void-black; the canvas clears to it so there is no seam. */
 const VOID_BLACK = "#0B0C10";
@@ -125,7 +126,8 @@ export default function HeroCanvas({
       />
 
       <Suspense fallback={null}>
-        {children}
+        {/* Wraps only the deck: everything below stays up if it falls over. */}
+        <DeckBoundary>{children}</DeckBoundary>
 
         {/*
           The card rim is metallic 1.0 (see tools/card_mesh.py) and metal with
