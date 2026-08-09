@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cinzel, Inter } from "next/font/google";
 import SiteHeader from "@/components/site/SiteHeader";
 import SiteFooter from "@/components/site/SiteFooter";
+import WhatsAppButton from "@/components/site/WhatsAppButton";
 import "./globals.css";
 
 // Self-hosted by next/font. The CSS variables are consumed by the --font-*
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
     template: "%s · Shivoham Universal Sol",
   },
   description:
-    "Vastu, numerology, tarot and relationship guidance from Priya Swaroop Tripathi. Practical remedies for health, work, money and relationships. Consultations held remotely, worldwide.",
+    "Vastu, numerology, tarot and energy healing from Priya Swaroop Tripathi. Practical remedies for health, work, money and relationships. Consultations held remotely, worldwide.",
 };
 
 export const viewport: Viewport = {
@@ -57,6 +58,9 @@ export default function RootLayout({
         <SiteHeader />
         {children}
         <SiteFooter />
+        {/* Last in the body so it paints over everything at equal z-index —
+            it is fixed, so its position in the flow costs nothing. */}
+        <WhatsAppButton />
       </body>
     </html>
   );

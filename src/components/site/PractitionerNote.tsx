@@ -5,6 +5,9 @@ import Heading from "@/components/ui/Heading";
 import Eyebrow from "@/components/ui/Eyebrow";
 import Button from "@/components/ui/Button";
 import Prose from "@/components/ui/Prose";
+import Parallax from "@/components/motion/Parallax";
+import Rule from "@/components/motion/Rule";
+import AstralBackdrop from "@/components/ui/AstralBackdrop";
 
 /**
  * The homepage's second section: who she is, before what she sells.
@@ -13,12 +16,19 @@ import Prose from "@/components/ui/Prose";
  * three testimonials on this page are all about *her* rather than about a
  * product. Meeting the offering first was the wrong order.
  *
- * Server Component on purpose — the content is static, so this ships no JS. A
- * scroll-triggered fade would force "use client" onto it for very little.
+ * Still a Server Component. The motion primitives it now uses are client
+ * components, but they receive this file's markup as `children` — so the JSX
+ * is rendered on the server and passed through as a slot, and this module
+ * itself never lands in the bundle.
  */
 export default function PractitionerNote() {
+  // relative/isolate/overflow-hidden are AstralBackdrop's stated contract, not
+  // styling preference — see the USAGE note on that component for what each of
+  // the three is holding up.
   return (
-    <Section tone="ethereal">
+    <Section tone="ethereal" className="relative isolate overflow-hidden">
+      <AstralBackdrop />
+
       <div className="grid items-center gap-10 md:grid-cols-[auto_1fr] md:gap-14">
         {/*
           A framed photograph rather than the alpha cut-out that was here first.
@@ -29,7 +39,10 @@ export default function PractitionerNote() {
           puts her in a room full of books, which says "someone who studies"
           faster than any sentence could.
         */}
-        <div className="relative mx-auto w-[300px] shrink-0 md:mx-0">
+        {/* A slow drift against the text column as the section passes. Small
+            enough that you register the photograph as sitting *in* the page
+            rather than seeing it move. */}
+        <Parallax className="relative mx-auto w-[300px] shrink-0 md:mx-0" distance={34}>
           {/*
             A violet bloom bleeding out past the frame, so the photograph
             belongs to the page instead of sitting on top of it.
@@ -71,13 +84,13 @@ export default function PractitionerNote() {
               />
             </div>
           </div>
-        </div>
+        </Parallax>
 
         <div>
           <Eyebrow>The practice</Eyebrow>
-          <div aria-hidden className="rule-astral mt-4 h-px w-32" />
+          <Rule className="mt-4" />
 
-          <Heading as="h2" className="mt-6">
+          <Heading as="h2" className="mt-6" reveal>
             {SITE.practitioner.name}
           </Heading>
           <p className="font-inter text-astral-gold/70 mt-3 text-sm tracking-[0.2em] uppercase">

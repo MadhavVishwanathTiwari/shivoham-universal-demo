@@ -5,6 +5,7 @@ import Heading from "@/components/ui/Heading";
 import Eyebrow from "@/components/ui/Eyebrow";
 import Faq from "@/components/ui/Faq";
 import Button from "@/components/ui/Button";
+import Rule from "@/components/motion/Rule";
 
 export const metadata: Metadata = {
   title: "FAQ",
@@ -17,7 +18,7 @@ export default function FaqPage() {
     <>
       <Section>
         <Eyebrow>Questions</Eyebrow>
-        <div aria-hidden className="rule-astral mt-4 h-px w-32" />
+        <Rule className="mt-4" />
 
         <Heading as="h1" className="mt-6">
           Frequently asked
@@ -31,7 +32,9 @@ export default function FaqPage() {
       {/* The per-service questions repeated here, so someone who lands on the
           FAQ from search doesn't have to visit four pages to find them. */}
       <Section tone="ethereal" className="!pt-16">
-        <Heading as="h2">By service</Heading>
+        <Heading as="h2" reveal>
+          By service
+        </Heading>
         <div className="mt-8 space-y-10">
           {SERVICES.filter((s) => s.faqs.length > 0).map((service) => (
             <div key={service.slug}>
@@ -45,7 +48,9 @@ export default function FaqPage() {
       </Section>
 
       <Section className="!pt-16 text-center">
-        <Heading as="h2">Still wondering?</Heading>
+        <Heading as="h2" reveal>
+          Still wondering?
+        </Heading>
         <div className="mt-8">
           <Button href="/contact">Ask directly</Button>
         </div>

@@ -5,6 +5,7 @@ import Heading from "@/components/ui/Heading";
 import Eyebrow from "@/components/ui/Eyebrow";
 import Button from "@/components/ui/Button";
 import TestimonialCard from "@/components/service/TestimonialCard";
+import Rule from "@/components/motion/Rule";
 
 export const metadata: Metadata = {
   title: "Testimonials",
@@ -17,7 +18,7 @@ export default function TestimonialsPage() {
     <>
       <Section>
         <Eyebrow>Success stories</Eyebrow>
-        <div aria-hidden className="rule-astral mt-4 h-px w-32" />
+        <Rule className="mt-4" />
 
         <Heading as="h1" className="mt-6">
           In their words
@@ -36,7 +37,9 @@ export default function TestimonialsPage() {
       </Section>
 
       <Section tone="ethereal" className="!pt-16 text-center">
-        <Heading as="h2">Start your own</Heading>
+        <Heading as="h2" reveal>
+          Start your own
+        </Heading>
         <div className="mt-8">
           <Button href="/contact">Get in touch</Button>
         </div>

@@ -4,8 +4,9 @@
  * is a build error rather than a broken page.
  *
  * Copy recovered from the 2021 PHP site (Vaastu.php, Tarot Reading.php,
- * numerological.php, RelationshipFitnessGuide.php) and lightly edited for
- * grammar. Two things were deliberately NOT carried over:
+ * numerological.php) and lightly edited for grammar. Fees and the `includes`
+ * lists come from a later source — her own package sheet, see
+ * PRICES_ARE_PLACEHOLDER. Two things were deliberately NOT carried over:
  *
  *   - Outcome guarantees ("we guarantee success within 60 days"). Promising a
  *     result you cannot control is a consumer-protection exposure and the kind
@@ -30,7 +31,14 @@
  * from the client's first paint.
  */
 export type Pricing =
-  | { kind: "fixed"; amountPaise: number; displayINR: string }
+  | {
+      kind: "fixed";
+      amountPaise: number;
+      displayINR: string;
+      /** What the amount buys, where it is not one session — tarot is billed
+       *  "per question". Omitted means the price is for the consultation. */
+      unit?: string;
+    }
   | { kind: "quote"; startingFromINR?: string };
 
 export interface ServiceFaq {
@@ -53,26 +61,31 @@ interface ServiceBase {
   /** The bulleted "what this covers" list every old service page carried. */
   includes: string[];
   faqs: ServiceFaq[];
-  /** Indicative session length. Also invented — see PRICES_ARE_PLACEHOLDER. */
+  /** Indicative session length. Still invented — the package sheet gives fees
+   *  and scope but says nothing about duration. */
   durationMinutes: number;
+  /** How the session is held, where she states it. Only numerology does. */
+  delivery?: string;
 }
 
 export type Service = ServiceBase & { pricing: Pricing };
 
 /**
- * ⚠️ EVERY PRICE BELOW IS INVENTED. ⚠️
+ * The prices below are REAL as of 2026-08-09.
  *
- * The 2021 site published no prices at all — its FAQ said fees "vary, check in
- * person with the team" — so there is no real number to recover. These exist so
- * the demo reads as a finished site rather than one with holes in it.
+ * They were placeholders until then — the 2021 site published none, its FAQ
+ * only said fees "vary, check in person with the team". They now come from the
+ * practitioner's own package sheet (tarotpackages.xlsx), which is also the
+ * source for every `includes` list further down.
  *
- * They are safe only because nothing charges anyone yet: checkout is not built.
- * Wiring up payments while this flag is still true would take real money at a
- * made-up price, so treat it as a release gate, not a note.
+ * Two things this flag no longer covers, so don't read it as blanket approval:
+ *   - `durationMinutes` is still invented on every service.
+ *   - Nothing charges anyone yet. Checkout is not built, and taking money still
+ *     needs the Razorpay work in content/site.ts (registered address, GST).
  *
  * Grep this constant to find every affected surface.
  */
-export const PRICES_ARE_PLACEHOLDER = true;
+export const PRICES_ARE_PLACEHOLDER = false;
 
 export const SERVICES: Service[] = [
   {
@@ -88,28 +101,23 @@ export const SERVICES: Service[] = [
       "Vastu addresses concerns around health, relationships, money, work, study, property and legal matters. Beyond solving problems, it aims at a settled and generous place to live.",
     ],
     includes: [
-      "Home Vastu",
-      "Office and shop Vastu",
-      "Commercial complex Vastu",
-      "Factories and mines Vastu",
-      "Hotels and restaurants Vastu",
-      "Hospitals and dispensary Vastu",
-      "Educational institutions Vastu",
-      "Cinema and studio Vastu",
-      "Temple Vastu",
-      "Vastu for plots",
-      "Vastu Shanti Puja",
-      "Trees, plants and colours of Vastu",
-      "Vastu Muhurta",
+      "Vastu for home",
+      "Vastu for office",
+      "Vastu for factories and industries",
+      "Vastu for shops and showrooms",
+      "Vastu for hotels and restaurants",
+      "Vastu for hospitals",
+      "Vastu for schools and colleges",
+      "Vastu for temples and religious places",
     ],
     faqs: [
       {
         q: "Why is Vastu quoted rather than fixed-price?",
-        a: "Because the work scales with the property. A one-bedroom flat and a factory floor are not the same survey, and a published flat fee would either overcharge the first or underprice the second. Share the property details and you get a real number before anything is booked.",
+        a: "Because the work scales with the property. A one-bedroom flat and a factory floor are not the same survey, and a published flat fee would either overcharge the first or underprice the second. The fee starts at ₹10,000; share the property details and you get a real number before anything is booked.",
       },
     ],
     durationMinutes: 90,
-    pricing: { kind: "quote", startingFromINR: "₹5,000" },
+    pricing: { kind: "quote", startingFromINR: "₹10,000" },
   },
 
   {
@@ -123,23 +131,32 @@ export const SERVICES: Service[] = [
       "The cards help you hear your own inner voice and take its messages seriously. Read well, they clarify what a situation is actually telling you, which is why tarot suits questions about relationships, money, healing and reconciliation better than most tools.",
     ],
     includes: [
-      "Career and money",
-      "Relationships, love and compatibility",
-      "Health and wellness",
-      "Weekly, monthly, quarterly and annual forecasts",
-      "Past-life questions",
-      "Study and examination questions",
-      "Timing questions: when, and whether",
-      "Reading another person's feelings and intentions",
+      "Relationship consultation",
+      "Job and career consultation",
+      "Health consultation",
+      "Money consultation",
+      "Marriage and love consultation",
+      "Future consultation",
+      "A specific person's reading",
+      "Past, present and future consultation",
     ],
     faqs: [
       {
         q: "Will you tell me my future?",
         a: "Not as a fortune teller would. This is a systematic, analytical practice, but with years of meditation and intuition behind it a tarot reading can speak to where a situation is heading and what is shaping it.",
       },
+      {
+        q: "What counts as one question?",
+        a: "One situation you want read — the cards are drawn and interpreted for that. Follow-ups that open a different situation are a new question. If you are not sure whether what you are bringing is one thing or three, ask before you book and you will be told plainly.",
+      },
     ],
     durationMinutes: 45,
-    pricing: { kind: "fixed", amountPaise: 250000, displayINR: "₹2,500" },
+    pricing: {
+      kind: "fixed",
+      amountPaise: 110000,
+      displayINR: "₹1,100",
+      unit: "per question",
+    },
   },
 
   {
@@ -155,12 +172,17 @@ export const SERVICES: Service[] = [
       "My work combines several systems of number study rather than relying on one.",
     ],
     includes: [
-      "Alphabetic systems",
-      "Latin alphabet systems",
-      "Pythagorean system",
-      "Chaldean system",
-      "Name correction and alignment",
-      "Remedies for health, relationships, marriage, money and work",
+      "Overall analysis of your date of birth",
+      "Name spelling corrections",
+      "Baby name spellings",
+      "Business name spellings",
+      "Product and brand name spellings",
+      "Lucky mobile number",
+      "Lucky car number",
+      "Matchmaking",
+      "Best suited career option",
+      "Best delivery date",
+      "Future trends",
     ],
     faqs: [
       {
@@ -177,38 +199,54 @@ export const SERVICES: Service[] = [
       },
     ],
     durationMinutes: 60,
-    pricing: { kind: "fixed", amountPaise: 350000, displayINR: "₹3,500" },
+    delivery: "Telephonic, video conferencing or in person",
+    pricing: { kind: "fixed", amountPaise: 1100000, displayINR: "₹11,000" },
   },
 
+  /*
+   * No 2021 source exists for this one — the old site never sold it as a
+   * pillar. Written from the package sheet's five sub-services, deliberately in
+   * the register of the other three: what the session is, what it is not, and
+   * no claim that any of it treats an illness. See the header note on the Drugs
+   * and Magic Remedies Act — this is the service where that line is easiest to
+   * cross by accident.
+   */
   {
-    slug: "relationship-fitness",
-    name: "Relationship Fitness",
-    tagline: "How blissful your life is with your partner.",
+    slug: "healing-meditation",
+    name: "Healing & Meditation",
+    tagline: "Where the work is on the energy rather than the question.",
     summary:
-      "A practical programme for couples: weekly habits and monthly acts that rebuild warmth, instead of reopening old arguments.",
+      "Chakra balancing, Reiki, crystal healing, dowsing and switch words — energy work for when you are carrying something you cannot name.",
     body: [
-      "However rich or poor you are, relationships are what carry you through good times and bad. They are also where most people are struggling: modern schedules, nuclear families, individual goals and a great deal of screen time have left many of us walled off, out of practice at listening, at forgiving, at simply sitting with someone.",
-      "The usual advice is to talk it through. Be open. Discuss the problem. In practice that often reopens the wound: the same memories, the same hurt, the same stress.",
-      "So this takes a different route, and it is why the word is fitness. Rather than re-arguing the past, we build a series of small, repeatable acts: weekly habits that soften how you feel toward each other, and one monthly act that restores warmth. Practice, not litigation.",
+      "Not every situation arrives as a question. Sometimes there is nothing to read and nothing to calculate — just a heaviness that has settled and will not lift, and a sense of being out of step with your own life.",
+      "This is the part of the practice that works on that directly. Chakra balancing locates where the heaviness is sitting; dowsing tests what is actually going on rather than what you assume is; Reiki and crystal healing are the hands-on work; switch words are what you take away and keep using on your own.",
+      "It is calming, deliberate work, and it pairs naturally with the other three. A numerology or Vastu remedy tells you what to change; this is about being in a state to actually change it. Sessions are held one to one, and you leave with a short practice to continue at home.",
+      "It is complementary work and nothing here treats a medical condition. If something needs a doctor, see a doctor — that advice is free and it comes first.",
     ],
     includes: [
-      "Breaking destructive patterns of behaviour",
-      "Moving on from hurt, disrespect and anger",
-      "Becoming a team rather than two individuals",
-      "Making decisions together",
-      "Getting your own needs met",
-      "Connecting with an emotionally absent partner",
-      "Restoring honour, respect and intimacy",
-      "Being heard, and learning to listen",
+      "Chakra balancing",
+      "Dowsing",
+      "Switch words",
+      "Reiki",
+      "Crystal healing",
+      "Guided meditation practice to continue at home",
     ],
     faqs: [
       {
-        q: "Is this couples counselling?",
-        a: "It sits alongside it rather than replacing it. The emphasis is on practical habits rather than re-examining the history, which is why some people find it easier to start with. It is not a substitute for clinical therapy where that is what is needed.",
+        q: "Will this cure an illness?",
+        a: "No, and anyone telling you otherwise is selling something. This is complementary work — it sits alongside medical care, never in place of it. What clients most often report is feeling settled enough to deal with what is in front of them.",
+      },
+      {
+        q: "Do I need to have had a reading first?",
+        a: "Not at all. Some people come here first and never take a reading. Others come after a numerology or Vastu consultation, because a remedy is easier to keep up when you are not exhausted.",
+      },
+      {
+        q: "Why does this start at ₹3,700 rather than a flat fee?",
+        a: "Because a single chakra balancing session and a course of Reiki over several weeks are not the same commitment. The starting figure is one session; anything longer is quoted once it is clear what you actually need.",
       },
     ],
     durationMinutes: 60,
-    pricing: { kind: "quote", startingFromINR: "₹4,000" },
+    pricing: { kind: "quote", startingFromINR: "₹3,700" },
   },
 ];
 

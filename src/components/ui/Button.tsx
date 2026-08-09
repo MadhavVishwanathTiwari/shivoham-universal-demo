@@ -3,11 +3,15 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 type Variant = "primary" | "ghost" | "link";
 
+/* `btn-sheen` only on primary: the sweep is a white gradient and it needs a
+   filled, opaque surface to read against. On the ghost variant it washes over
+   the page background showing through the button and looks like a rendering
+   artefact. Ghost gets the border-brightening hover instead. */
 const VARIANT_CLASS: Record<Variant, string> = {
   primary:
-    "bg-astral-gold text-void-black hover:bg-astral-gold/90 rounded-astral px-6 py-3 font-semibold",
+    "btn-sheen bg-astral-gold text-void-black hover:bg-astral-gold/90 rounded-astral px-6 py-3 font-semibold",
   ghost:
-    "border-astral-gold/40 text-astral-gold hover:bg-astral-gold/10 rounded-astral border px-6 py-3",
+    "border-astral-gold/40 text-astral-gold hover:border-astral-gold/80 hover:bg-astral-gold/10 rounded-astral border px-6 py-3",
   link: "text-astral-gold underline-offset-4 hover:underline",
 };
 
@@ -41,7 +45,9 @@ export default function Button({
   className = "",
   ...rest
 }: Props) {
-  const cls = `focus-astral font-inter inline-flex items-center justify-center text-sm tracking-wide whitespace-nowrap transition-colors ${VARIANT_CLASS[variant]} ${className}`;
+  /* `active:scale-[0.97]` is the press. Tiny on purpose — it exists to confirm
+     the tap landed on a touch device, where there is no hover state to do it. */
+  const cls = `focus-astral font-inter inline-flex items-center justify-center text-sm tracking-wide whitespace-nowrap transition-[color,background-color,border-color,transform] duration-200 active:scale-[0.97] motion-reduce:active:scale-100 ${VARIANT_CLASS[variant]} ${className}`;
 
   if ("href" in rest && rest.href !== undefined) {
     const { href, target } = rest;

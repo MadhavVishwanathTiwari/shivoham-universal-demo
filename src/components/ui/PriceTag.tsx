@@ -18,12 +18,16 @@ export default function PriceTag({
   const taxNote = SITE.GST_REGISTERED ? " incl. GST" : "";
 
   if (pricing.kind === "fixed") {
+    /* "per question" and "incl. GST" are both suffixes on the same amount, so
+       they share one line rather than each inventing its own placement. */
+    const suffix = [pricing.unit, taxNote.trim()].filter(Boolean).join(" · ");
+
     return (
       <span className={`font-cinzel text-astral-gold text-2xl ${className}`}>
         {pricing.displayINR}
-        {taxNote && (
+        {suffix && (
           <span className="font-inter text-parchment-white/45 ml-2 text-xs">
-            {taxNote}
+            {suffix}
           </span>
         )}
       </span>

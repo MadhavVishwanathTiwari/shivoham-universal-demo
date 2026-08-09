@@ -44,6 +44,59 @@
    * invariant on Section itself.
    */
   --header-h: 4.5rem;
+
+  /* Emits `animate-marquee`. The -50% is load-bearing and belongs to the
+     markup: TestimonialMarquee renders its list exactly twice, so half the
+     track is one full pass and the loop point is invisible. Change one without
+     the other and the row jumps every cycle. */
+  --animate-marquee: marquee-rtl 55s linear infinite;
+
+  /* Emits `animate-invite` — the "this deck is interactive" nudge on the hero
+     copy. Runs forever by request. */
+  --animate-invite: invite-pulse 2.6s ease-in-out infinite;
+}
+
+/* The resting state, carried whether the animation runs or not: a faint gold
+   bloom, and the promise that the only thing the keyframes ever touch is
+   opacity. Reduced-motion users get this and nothing else. */
+.invite-hint {
+  text-shadow: 0 0 14px color-mix(in srgb, var(--color-astral-gold) 30%, transparent);
+  /* Own compositor layer. Opacity is a compositor property, so the pulse never
+     re-rasterizes the glyphs — without the promotion the browser is entitled to
+     repaint text and its shadow on every frame, which is where the stutter came
+     from. */
+  will-change: opacity;
+}
+
+/*
+ * Opacity only, deliberately.
+ *
+ * This used to also drift the line 2px down. It never looked smooth and it
+ * couldn't: moving text by a subpixel amount forces the rasterizer to re-hint
+ * and re-snap the glyphs every frame, so the line crawls between integer
+ * positions instead of gliding, and the text-shadow repaints along with it. A
+ * transform that small is all cost and no motion. Opacity is handled entirely
+ * on the compositor and interpolates cleanly at any frame rate.
+ */
+@keyframes invite-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    /* Deep enough to read as a deliberate blink, never near transparent — a
+       line of copy that vanishes reads as a fault in the page. */
+    opacity: 0.55;
+  }
+}
+
+@keyframes marquee-rtl {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
 }
 
 @layer base {
@@ -92,6 +145,31 @@
   );
 }
 
+/*
+ * Google Maps tiles, dragged into this site's palette.
+ *
+ * A filter, and not a styled map, because the keyless `?output=embed` endpoint
+ * takes no style parameters at all — proper dark tiles mean the Maps Embed API,
+ * a billing-enabled key, and a custom map style ID. See LocationMap.tsx for why
+ * that trade wasn't taken.
+ *
+ * The pairing is the whole trick: invert() turns the near-white basemap dark and
+ * flips every hue to its opposite, then hue-rotate(180deg) flips the hues back —
+ * so water reads blue and parks read green instead of the orange-and-magenta a
+ * bare invert leaves behind. Lightness stays inverted, which is the part we
+ * actually wanted. Saturation is pulled down and contrast up afterwards so the
+ * result sits with the gold rather than competing with it.
+ *
+ * Goes on the iframe itself and never on its wrapper. A filter applies to the
+ * element's whole rendered subtree including its own border and background, so
+ * on the frame this sits in it would inverse the gold hairline to a pale blue —
+ * the one element on the page that must not move off-palette.
+ */
+@utility map-dark {
+  filter: invert(92%) hue-rotate(180deg) saturate(0.75) contrast(1.05)
+    brightness(0.95);
+}
+
 /* A hairline gold rule that fades out at both ends — used under the eyebrow
    and as the scroll cue's stem. */
 @utility rule-astral {
@@ -122,6 +200,217 @@
   }
 }
 
+/*
+ * The cursor-tracked bloom on cards. Driven by --spot-x / --spot-y, which
+ * Spotlight.tsx writes directly onto the node on pointermove.
+ *
+ * `z-index: -1` on the ::before is what puts the glow above the card's own
+ * translucent background but underneath its text. A negative z-index paints
+ * between the parent's background and its in-flow content, which is exactly
+ * the layer wanted here — without it the bloom paints over the copy and tints
+ * it gold. `isolation: isolate` keeps that -1 from escaping the card and
+ * sliding behind the page background instead.
+ *
+ * The fallback in each var() matters: before the first pointermove the
+ * properties are unset, and an unset var in a gradient invalidates the whole
+ * declaration. 50% parks the unlit bloom at the card's centre.
+ */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(
+    340px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    color-mix(in srgb, var(--color-astral-gold) 13%, transparent),
+    transparent 68%
+  );
+}
+
+.spotlight:hover::before,
+.spotlight:focus-visible::before {
+  opacity: 1;
+}
+
+/* A light sweep across a filled button on hover. `translate` only — a moving
+   gradient background-position repaints the button every frame. */
+@utility btn-sheen {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-120%) skewX(-18deg);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(255 255 255 / 0.28),
+      transparent
+    );
+  }
+
+  &:hover::after {
+    transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+    transform: translateX(120%) skewX(-18deg);
+  }
+}
+
+/*
+ * ------------------------------------------------------------- astral field
+ * The ambient backdrop behind ordinary sections (AstralBackdrop.tsx). It is the
+ * hero's nebula restated in CSS: same violet/indigo/gold palette, none of the
+ * cost — no WebGL, no JS, nothing in the bundle, so it can sit on a Server
+ * Component.
+ *
+ * Everything below animates `transform` and nothing else. These layers are
+ * large (they cover a whole section) and there are four of them; animating a
+ * gradient's `background-position` or an element's `filter` would repaint that
+ * area every frame. Transform is composited, so each layer is rasterized once
+ * and then moved as a texture.
+ *
+ * INVARIANT: every keyframe set starts and ends at the same transform. The
+ * global prefers-reduced-motion rule collapses animation-duration to 0.001ms
+ * and iteration-count to 1 — it does not cancel the animation, it finishes it
+ * instantly. A 0% == 100% loop therefore lands exactly where it started, so
+ * reduced motion gets the composed still frame rather than a layout snapped to
+ * some arbitrary end pose.
+ */
+.astral-bloom {
+  position: absolute;
+  border-radius: 9999px;
+  /* Its own compositor layer, so the drift never re-rasterizes the gradient. */
+  will-change: transform;
+}
+
+.astral-bloom--a {
+  animation: astral-drift-a 38s ease-in-out infinite;
+}
+
+.astral-bloom--b {
+  animation: astral-drift-b 52s ease-in-out infinite;
+}
+
+.astral-bloom--c {
+  animation: astral-drift-c 30s ease-in-out infinite;
+}
+
+@keyframes astral-drift-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(7%, -9%, 0) scale(1.14);
+  }
+}
+
+@keyframes astral-drift-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.08);
+  }
+  50% {
+    transform: translate3d(-8%, 7%, 0) scale(0.9);
+  }
+}
+
+@keyframes astral-drift-c {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(0.95);
+  }
+  50% {
+    transform: translate3d(5%, 8%, 0) scale(1.1);
+  }
+}
+
+/*
+ * Two tiled starfields at different scales, drifting at different speeds — the
+ * parallax between them is the only thing that reads as depth here.
+ *
+ * The travel distance is exactly one tile in each axis. That is what makes the
+ * loop seamless: after translating by the full background-size the pattern is
+ * pixel-identical to where it began, so there is no jump at the wrap and no
+ * need to reverse direction (which would read as the sky sliding back).
+ */
+.astral-stars {
+  position: absolute;
+  background-repeat: repeat;
+  will-change: transform;
+}
+
+.astral-stars--near {
+  background-size: 320px 320px;
+  background-image:
+    radial-gradient(1.6px 1.6px at 34px 46px, rgb(248 249 250 / 0.9), rgb(248 249 250 / 0)),
+    radial-gradient(1.2px 1.2px at 188px 74px, rgb(248 249 250 / 0.65), rgb(248 249 250 / 0)),
+    radial-gradient(1.4px 1.4px at 96px 168px, rgb(212 175 55 / 0.75), rgb(212 175 55 / 0)),
+    radial-gradient(1px 1px at 268px 132px, rgb(248 249 250 / 0.55), rgb(248 249 250 / 0)),
+    radial-gradient(1.5px 1.5px at 232px 262px, rgb(248 249 250 / 0.7), rgb(248 249 250 / 0)),
+    radial-gradient(1.1px 1.1px at 130px 300px, rgb(212 175 55 / 0.6), rgb(212 175 55 / 0)),
+    radial-gradient(1.3px 1.3px at 12px 232px, rgb(248 249 250 / 0.6), rgb(248 249 250 / 0));
+  animation: astral-stars-near 150s linear infinite;
+}
+
+.astral-stars--far {
+  background-size: 460px 460px;
+  background-image:
+    radial-gradient(1px 1px at 62px 112px, rgb(248 249 250 / 0.5), rgb(248 249 250 / 0)),
+    radial-gradient(1px 1px at 348px 58px, rgb(248 249 250 / 0.42), rgb(248 249 250 / 0)),
+    radial-gradient(1.2px 1.2px at 210px 210px, rgb(212 175 55 / 0.45), rgb(212 175 55 / 0)),
+    radial-gradient(1px 1px at 420px 342px, rgb(248 249 250 / 0.45), rgb(248 249 250 / 0)),
+    radial-gradient(1px 1px at 118px 400px, rgb(248 249 250 / 0.38), rgb(248 249 250 / 0));
+  animation: astral-stars-far 260s linear infinite;
+}
+
+@keyframes astral-stars-near {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-320px, -320px, 0);
+  }
+}
+
+@keyframes astral-stars-far {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(460px, -460px, 0);
+  }
+}
+
+/* The testimonial row's viewport. Two things live here rather than in the
+   component because neither can be expressed as a Tailwind class: a mask, and a
+   media query. */
+.marquee-viewport {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 6%,
+    black 94%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 6%,
+    black 94%,
+    transparent
+  );
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -129,5 +418,31 @@
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+  }
+
+  /*
+   * The blanket rule above would leave the marquee frozen at translateX(-50%)
+   * — collapsing the duration doesn't cancel the animation, it just finishes it
+   * instantly. The row would look fine by luck (the track is two identical
+   * copies) but half of it would be unreachable. Stop the animation outright
+   * and hand the row back to the user as a scroller instead.
+   */
+  .marquee-track {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .marquee-viewport {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  /* Decorative-only effects, switched off rather than sped up. The blanket
+     rule above collapses their duration, which for a hover sweep means it
+     snaps instead of sweeping — worse than not having it. */
+  .spotlight::before,
+  .btn-sheen::after {
+    display: none;
   }
 }

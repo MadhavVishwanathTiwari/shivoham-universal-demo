@@ -7,6 +7,9 @@ import Button from "@/components/ui/Button";
 import Prose from "@/components/ui/Prose";
 import Faq from "@/components/ui/Faq";
 import PriceTag from "@/components/ui/PriceTag";
+import Reveal from "@/components/ui/Reveal";
+import Rule from "@/components/motion/Rule";
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 import TestimonialCard from "./TestimonialCard";
 
 /**
@@ -22,7 +25,7 @@ export default function ServicePage({ service }: { service: Service }) {
     <>
       <Section>
         <Eyebrow>{service.name}</Eyebrow>
-        <div aria-hidden className="rule-astral mt-4 h-px w-32" />
+        <Rule className="mt-4" />
 
         <Heading as="h1" className="mt-6">
           {service.tagline}
@@ -33,6 +36,11 @@ export default function ServicePage({ service }: { service: Service }) {
           <span className="font-inter text-parchment-white/45 text-sm">
             Approx. {service.durationMinutes} minutes
           </span>
+          {service.delivery && (
+            <span className="font-inter text-parchment-white/45 text-sm">
+              {service.delivery}
+            </span>
+          )}
         </div>
 
         {/* Everything routes to /contact for now — booking and payment are
@@ -49,44 +57,61 @@ export default function ServicePage({ service }: { service: Service }) {
       </Section>
 
       <Section tone="ethereal" className="!pt-16">
-        <Heading as="h2">What this covers</Heading>
-        <ul className="mt-8 grid gap-x-8 gap-y-3 sm:grid-cols-2">
+        <Heading as="h2" reveal>
+          What this covers
+        </Heading>
+        {/* A tighter stagger than the card grids: there are up to eleven of
+            these and 0.09s each would take a full second to finish listing. */}
+        <Stagger
+          as="ul"
+          className="mt-8 grid gap-x-8 gap-y-3 sm:grid-cols-2"
+          stagger={0.045}
+        >
           {service.includes.map((item) => (
-            <li
+            <StaggerItem
               key={item}
+              as="li"
               className="font-inter text-parchment-white/70 flex items-start gap-3 text-sm"
             >
               <span aria-hidden className="text-astral-gold mt-0.5">
                 ·
               </span>
               {item}
-            </li>
+            </StaggerItem>
           ))}
-        </ul>
+        </Stagger>
       </Section>
 
       {testimonials.length > 0 && (
         <Section className="!pt-16">
-          <Heading as="h2">In their words</Heading>
-          <div className="mt-8 grid gap-6 md:grid-cols-2">
+          <Heading as="h2" reveal>
+            In their words
+          </Heading>
+          <Stagger className="mt-8 grid gap-6 md:grid-cols-2">
             {testimonials.map((t) => (
-              <TestimonialCard key={t.id} testimonial={t} />
+              <StaggerItem key={t.id}>
+                <TestimonialCard testimonial={t} className="h-full" />
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         </Section>
       )}
 
       {service.faqs.length > 0 && (
         <Section tone="ethereal" className="!pt-16">
-          <Heading as="h2">Questions</Heading>
-          <div className="mt-8">
+          <Heading as="h2" reveal>
+            Questions
+          </Heading>
+          <Reveal className="mt-8">
             <Faq items={service.faqs} />
-          </div>
+          </Reveal>
         </Section>
       )}
 
       <Section className="!pt-16 text-center">
-        <Heading as="h2">Ready to begin?</Heading>
+        <Heading as="h2" reveal>
+          Ready to begin?
+        </Heading>
         <p className="font-inter text-parchment-white/60 mx-auto mt-4 max-w-xl text-pretty">
           Share your situation and you will get a clear sense of what the work
           involves before anything is committed.

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SITE } from "@/content/site";
+import { Stagger, StaggerItem } from "@/components/motion/Stagger";
 
 /** Legal pages land in Phase 2 — linked ahead of time for the same reason
  *  SiteHeader links to unbuilt service pages: Next 404s at runtime rather
@@ -16,8 +17,8 @@ export default function SiteFooter() {
 
   return (
     <footer className="border-astral-gold/10 bg-void-black border-t px-6 py-14">
-      <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-3">
-        <div>
+      <Stagger className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-3">
+        <StaggerItem>
           <p className="font-cinzel text-parchment-white text-sm tracking-[0.2em] uppercase">
             {SITE.name}
           </p>
@@ -26,9 +27,9 @@ export default function SiteFooter() {
             <br />
             {SITE.practitioner.title}
           </p>
-        </div>
+        </StaggerItem>
 
-        <div className="font-inter text-sm">
+        <StaggerItem className="font-inter text-sm">
           <p className="text-astral-gold/75 tracking-[0.2em] uppercase text-xs">
             Contact
           </p>
@@ -43,14 +44,29 @@ export default function SiteFooter() {
                 {SITE.contact.email}
               </a>
             </li>
-            {/* TODO(address): SITE.contact.address is still null — see
-                content/site.ts. Razorpay requires a published registered
-                address before issuing live keys, so this line is a
-                placeholder for a real requirement, not decoration. */}
-          </ul>
-        </div>
+            {/*
+              Society and city only, where /contact prints the full block. A
+              footer is on every page and this is a home practice — the shorter
+              line is enough to say "a real practice, in a real place" without
+              repeating a residential address site-wide.
 
-        <div className="font-inter text-sm">
+              TODO(address): still not a *registered* address — no unit, no
+              confirmed PIN, both of which Razorpay needs for live keys. See
+              contact.address in content/site.ts.
+            */}
+            <li className="pt-1.5">
+              <Link
+                href="/contact"
+                className="focus-astral hover:text-parchment-white"
+              >
+                {SITE.contact.address.society},{" "}
+                {SITE.contact.address.locality}
+              </Link>
+            </li>
+          </ul>
+        </StaggerItem>
+
+        <StaggerItem className="font-inter text-sm">
           <p className="text-astral-gold/75 tracking-[0.2em] uppercase text-xs">
             Legal
           </p>
@@ -63,8 +79,8 @@ export default function SiteFooter() {
               </li>
             ))}
           </ul>
-        </div>
-      </div>
+        </StaggerItem>
+      </Stagger>
 
       <p className="text-parchment-white/35 font-inter mt-12 text-center text-xs">
         © {year} {SITE.legalName}. All rights reserved.

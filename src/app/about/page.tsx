@@ -7,6 +7,7 @@ import Eyebrow from "@/components/ui/Eyebrow";
 import Button from "@/components/ui/Button";
 import Prose from "@/components/ui/Prose";
 import Card from "@/components/ui/Card";
+import Rule from "@/components/motion/Rule";
 
 export const metadata: Metadata = {
   title: "About",
@@ -35,7 +36,7 @@ export default function AboutPage() {
     <>
       <Section>
         <Eyebrow>About</Eyebrow>
-        <div aria-hidden className="rule-astral mt-4 h-px w-32" />
+        <Rule className="mt-4" />
 
         <Heading as="h1" className="mt-6">
           {SITE.practitioner.name}
@@ -109,7 +110,9 @@ export default function AboutPage() {
       </Section>
 
       <Section className="!pt-16 text-center">
-        <Heading as="h2">Work with me</Heading>
+        <Heading as="h2" reveal>
+          Work with me
+        </Heading>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Button href="/contact">Get in touch</Button>
           <Button href="/services" variant="ghost">

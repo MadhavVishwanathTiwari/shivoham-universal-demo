@@ -13,6 +13,7 @@ import {
 import HeroCanvas from "./HeroCanvas";
 import TarotDeck3D from "./TarotDeck3D";
 import { CardTooltip, CardSheet } from "./CardTooltip";
+import Button from "@/components/ui/Button";
 import { heroCards } from "./cardData";
 import { useIsMobile } from "./useMediaQuery";
 import { mapRange, useScrollStyle } from "./useScrollStyle";
@@ -93,6 +94,17 @@ export default function HeroSection() {
   const copyRef = useScrollStyle<HTMLDivElement>(scrollYProgress, (el, p) => {
     el.style.opacity = String(mapRange(p, 0, 0.28, 1, 0));
     el.style.transform = `translateY(${mapRange(p, 0, 0.28, 0, -40)}px)`;
+    /*
+     * The copy block gained a real button, and opacity alone does not retire
+     * one. `visibility: hidden` is doing the work that `pointer-events: none`
+     * cannot: it takes the link out of the tab order too, so a keyboard user
+     * scrolling past the hero doesn't land on an invisible "Book a reading".
+     * Both are applied at the exact point the fade reaches zero — earlier and
+     * a still-visible button would go dead under the cursor.
+     */
+    const gone = p >= 0.28;
+    el.style.pointerEvents = gone ? "none" : "";
+    el.style.visibility = gone ? "hidden" : "";
   });
   const cueRef = useScrollStyle<HTMLDivElement>(scrollYProgress, (el, p) => {
     el.style.opacity = String(mapRange(p, 0, 0.28, 1, 0));
@@ -279,9 +291,50 @@ export default function HeroSection() {
               transition={{ delay: 0.35, duration: 0.9, ease: "easeOut" }}
               className="font-inter text-parchment-white/55 mt-5 max-w-sm text-sm text-pretty md:text-base"
             >
-              Timeless insight for health, wealth, and relationships.{" "}
-              {isMobile ? "Tap your first card." : "Draw your first card."}
+              Timeless insight for health, wealth, and relationships.
+              {/* The instruction, not the pitch — it is the one sentence that
+                  tells you the deck below is interactive, so it carries the
+                  gold rather than blending into the blurb.
+
+                  `block` rather than a trailing space: as an inline run it
+                  wrapped mid-phrase at narrow widths ("Tap / your first card"),
+                  which reads as a typo rather than an invitation. Its own line
+                  also gives the pulse something to be — a glowing fragment at
+                  the end of a paragraph just looks like a rendering fault.
+
+                  The pulse lives on this span and not on the <p>: the paragraph
+                  carries Framer's entrance, which writes an inline opacity, and
+                  an inline opacity beats a CSS animation on the same element. */}
+              <span className="invite-hint text-astral-gold animate-invite mt-2 block font-medium [animation-delay:1.3s]">
+                {isMobile ? "Tap your first card." : "Draw your first card."}
+              </span>
             </motion.p>
+
+            {/*
+              pointer-events-auto is required and narrowly scoped: the wrapper
+              two levels up is pointer-events-none so the copy layer doesn't
+              swallow the R3F pointer events the deck runs on. This button is
+              the only thing in that subtree allowed to take a click — and it
+              gives the ground back while a card is being read on mobile, since
+              the sheet renders below this layer.
+            */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.55, duration: 0.8, ease: "easeOut" }}
+              className={`mt-6 ${inspecting ? "pointer-events-none" : "pointer-events-auto"}`}
+            >
+              <Button
+                href="/contact"
+                variant="ghost"
+                /* The backdrop is not decoration: this button lands on top of
+                   the card wave, and a bare gold hairline disappears against
+                   the lit cards on the left of the spread. */
+                className="bg-void-black/45 !px-5 !py-2 !text-[11px] tracking-[0.25em] uppercase backdrop-blur-sm"
+              >
+                Book a reading
+              </Button>
+            </motion.div>
           </div>
         </div>
 

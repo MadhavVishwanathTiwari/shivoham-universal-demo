@@ -3,14 +3,14 @@ import { notFound } from "next/navigation";
 import { bySlug } from "@/content/services";
 import ServicePage from "@/components/service/ServicePage";
 
-const service = bySlug("relationship-fitness");
+const service = bySlug("healing-meditation");
 
 export const metadata: Metadata = {
-  title: "Relationship Fitness",
+  title: "Healing & Meditation",
   description: service?.summary,
 };
 
-export default function RelationshipFitnessPage() {
+export default function HealingMeditationPage() {
   if (!service) notFound();
   return <ServicePage service={service} />;
 }

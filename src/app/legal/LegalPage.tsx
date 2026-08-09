@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Section from "@/components/ui/Section";
 import Heading from "@/components/ui/Heading";
 import Eyebrow from "@/components/ui/Eyebrow";
+import Rule from "@/components/motion/Rule";
 
 /**
  * Shared shell for the legal pages.
@@ -23,7 +24,7 @@ export default function LegalPage({
   return (
     <Section>
       <Eyebrow>Legal</Eyebrow>
-      <div aria-hidden className="rule-astral mt-4 h-px w-32" />
+      <Rule className="mt-4" />
 
       <Heading as="h1" className="mt-6">
         {title}
