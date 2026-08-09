@@ -49,6 +49,39 @@ export default function HeroSection() {
   /** A card is being read on a phone: the sheet is up and the copy gets out. */
   const inspecting = isMobile && selected !== null;
 
+  /**
+   * Whether the hero is anywhere near the viewport. Drives `frameloop`.
+   *
+   * Every phase of the deck is time-driven, so the canvas ran at "always" — and
+   * kept running while the visitor read the rest of the page, which on a phone
+   * is a 3D scene rendering at 60fps into a screen nobody is looking at. The
+   * GPU eventually takes the context away, and a lost context on an `alpha:
+   * false` canvas composites as a white rectangle.
+   *
+   * The margin is generous on purpose: resuming a frame early costs nothing,
+   * whereas resuming late means scrolling back up to a hero that has not drawn
+   * yet.
+   */
+  const [heroNearViewport, setHeroNearViewport] = useState(true);
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      ([entry]) => setHeroNearViewport(entry.isIntersecting),
+      { rootMargin: "300px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  /**
+   * Bumped to remount the Canvas after the GL context was lost and restored.
+   * Everything the old context held — programs, buffers, textures — died with
+   * it, so the restored context draws an empty scene until the R3F root is
+   * rebuilt from scratch. That is what made the blank hero survive a reload.
+   */
+  const [canvasGeneration, setCanvasGeneration] = useState(0);
+
   /*
    * The gather phase. "end end" puts progress = 1 exactly where the stage
    * unpins, so this range covers only the pinned scrolling.
@@ -236,7 +269,10 @@ export default function HeroSection() {
         <motion.div {...panProps} className="absolute inset-0">
           <div ref={stageRef} className="h-full w-full">
             <HeroCanvas
+              key={canvasGeneration}
               interactive={!isMobile && hovered !== null}
+              paused={!heroNearViewport}
+              onContextRestored={() => setCanvasGeneration((g) => g + 1)}
               gather={gather}
               isMobile={isMobile}
               reducedMotion={reducedMotion}
@@ -285,16 +321,27 @@ export default function HeroSection() {
           straight over the card art), the inner one is the scroll fade.
         */}
         <div
-          className={`pointer-events-none absolute inset-x-0 top-0 z-10 px-6 pt-[7svh] text-center transition-opacity duration-500 md:pt-[12svh] ${
+          /* Mobile padding is measured off the header rather than the viewport.
+             7svh put the top of this block at ~62px on a typical phone, under a
+             72px header — so the eyebrow was simply hidden behind it and the
+             gold rule sat right against its edge. A percentage of viewport
+             height cannot clear a fixed-pixel header at every screen size, so
+             it is derived from the header's own token instead. */
+          className={`pointer-events-none absolute inset-x-0 top-0 z-10 px-6 pt-[calc(var(--header-h)+1.5rem)] text-center transition-opacity duration-500 md:pt-[12svh] ${
             inspecting ? "opacity-0" : "opacity-100"
           }`}
         >
           <div ref={copyRef} className="flex flex-col items-center">
+            {/* Desktop only. On a phone the header's wordmark is a couple of
+                centimetres above this, so it read as the company name printed
+                twice in the same glance — and the fixed header cropped it
+                besides. The gold rule below carries the same opening beat on
+                its own. */}
             <motion.p
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              className="text-astral-gold/75 font-inter text-[11px] tracking-[0.4em] uppercase"
+              className="text-astral-gold/75 font-inter hidden text-[11px] tracking-[0.4em] uppercase md:block"
             >
               Shivoham Universal Sol
             </motion.p>

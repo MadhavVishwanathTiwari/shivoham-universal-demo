@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ScrollProgress from "@/components/motion/ScrollProgress";
 
@@ -33,14 +33,44 @@ const NAV_LINKS = [
  * z-40: above the hero's tooltip (z-20) and mobile CardSheet (z-30), so the
  * header is always the topmost, always-clickable layer regardless of what the
  * hero is doing underneath it.
+ *
+ * The chrome — tint, hairline border and backdrop blur — only appears once the
+ * page has scrolled, and that is not a flourish. At the top of the home page
+ * this sits directly over a full-bleed WebGL hero, where the border drew a
+ * visible line straight across the backdrop and the blur put a hard
+ * blurred/unblurred seam along the same edge: the hero looked cut in half.
+ *
+ * The blur was also expensive in a way that is easy to miss. `backdrop-filter`
+ * re-samples and re-blurs whatever is beneath it every time that content
+ * repaints, and beneath it was a canvas rendering at 60fps — so the compositor
+ * redid a full-width blur every single frame, forever, on a phone.
  */
 export default function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    // Passive: this must never delay a scroll. The threshold is small — the
+    // chrome should arrive as soon as content starts passing underneath, not
+    // after a deliberate scroll.
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /* The menu needs a readable backdrop wherever it opens, including at the very
+     top of the hero, so it counts as "scrolled" for styling purposes. */
+  const chrome = scrolled || open;
 
   return (
     <header
-      className="border-astral-gold/10 bg-void-black/30 fixed inset-x-0 top-0 z-40 h-[var(--header-h)] border-b backdrop-blur-md"
+      className={`fixed inset-x-0 top-0 z-40 h-[var(--header-h)] border-b transition-colors duration-300 ${
+        chrome
+          ? "border-astral-gold/10 bg-void-black/30 backdrop-blur-md"
+          : "border-transparent bg-transparent"
+      }`}
     >
       <div className="mx-auto flex h-full max-w-6xl items-center justify-between px-6">
         <Link

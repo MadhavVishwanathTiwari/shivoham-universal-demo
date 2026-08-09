@@ -295,8 +295,12 @@
 .astral-bloom {
   position: absolute;
   border-radius: 9999px;
-  /* Its own compositor layer, so the drift never re-rasterizes the gradient. */
-  will-change: transform;
+  /* No will-change. A running CSS transform animation is promoted by the
+     browser for its own duration anyway, so declaring it bought nothing and
+     cost a compositor layer held for the life of the page — several of these,
+     plus the star layers below, all resident while the visitor is nowhere near
+     them. On a phone that memory is competing with the hero's WebGL context,
+     and the context is what loses. */
 }
 
 .astral-bloom--a {
@@ -353,7 +357,7 @@
 .astral-stars {
   position: absolute;
   background-repeat: repeat;
-  will-change: transform;
+  /* See .astral-bloom: the animation promotes these on its own. */
 }
 
 .astral-stars--near {

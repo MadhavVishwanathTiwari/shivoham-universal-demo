@@ -58,6 +58,10 @@ export interface HeroCanvasProps {
   reducedMotion: boolean;
   /** Raised while a card is focused, so the pointer reads as interactive. */
   interactive?: boolean;
+  /** Hero is off screen — stop rendering entirely. See `frameloop` below. */
+  paused?: boolean;
+  /** The GL context came back after being lost; the caller remounts on this. */
+  onContextRestored?: () => void;
   className?: string;
 }
 
@@ -66,10 +70,19 @@ export interface HeroCanvasProps {
  * passed in as children so this file owns rendering concerns and TarotDeck3D
  * owns motion.
  *
- * Performance guardrails: DPR is capped at 2 (a 3x phone would otherwise render
- * ~2.5x the pixels for no visible gain), there are no post-processing passes and
- * no render targets — the nebula is a scene object costing one draw call — and
- * `frameloop` stays on "always" because every phase is time-driven.
+ * Performance guardrails: there are no post-processing passes and no render
+ * targets — the nebula is a scene object costing one draw call.
+ *
+ * DPR is capped harder on phones than on desktop. A 3x phone at dpr 2 renders
+ * ~1.8x the pixels of dpr 1.5 and holds a backing store to match, and on a
+ * ~400px-wide screen showing a soft-lit 3D scene that buys nothing you can see.
+ * It does buy GPU memory pressure, which on Android is paid for with a lost
+ * context — and a lost context is not a degraded hero, it is a white rectangle.
+ *
+ * `frameloop` is the other half of that. Every phase here is time-driven, so
+ * this ran at "always" — including the entire time the hero is scrolled off
+ * screen, which on a long page is most of the session. Rendering a 3D scene
+ * nobody can see, on a phone, until the GPU gives up.
  */
 export default function HeroCanvas({
   children,
@@ -77,12 +90,15 @@ export default function HeroCanvas({
   isMobile,
   reducedMotion,
   interactive = false,
+  paused = false,
+  onContextRestored,
   className,
 }: HeroCanvasProps) {
   return (
     <Canvas
       className={className}
-      dpr={[1, 2]}
+      frameloop={paused ? "never" : "always"}
+      dpr={isMobile ? [1, 1.5] : [1, 2]}
       camera={{ position: [0, 0, 7.4], fov: 42, near: 0.1, far: 60 }}
       gl={{
         antialias: true,
@@ -95,6 +111,24 @@ export default function HeroCanvas({
         // A fallback, not the backdrop: the nebula quad covers every pixel, so
         // this is only ever seen if its program fails to compile.
         scene.background = new THREE.Color(VOID_BLACK);
+
+        /*
+         * Context loss is not hypothetical on Android — memory pressure takes
+         * the context away and the canvas composites white, because `alpha` is
+         * false and there is no longer anything backing it.
+         *
+         * three already calls preventDefault on the loss, so the browser does
+         * restore the context. What it cannot do is put the scene back: the
+         * programs, buffers and textures all died with the old context, so the
+         * restored one draws nothing and the hero stays blank across reloads.
+         * The caller remounts the whole Canvas on this, which is the only
+         * reliable way to rebuild that state.
+         */
+        gl.domElement.addEventListener(
+          "webglcontextrestored",
+          () => onContextRestored?.(),
+          { once: true },
+        );
       }}
       style={{ cursor: interactive ? "pointer" : "default" }}
     >
