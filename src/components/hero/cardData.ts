@@ -25,6 +25,7 @@ export interface Atlas {
 
 export interface TarotCard {
   id: string;
+  /** Place in the full 78-card deck. Does NOT address an atlas tile. */
   index: number;
   name: string;
   arcana: string | null;
@@ -32,7 +33,18 @@ export interface TarotCard {
   number: string | null;
   keywords: string[];
   essence: string;
-  image: string;
+  /**
+   * Slot in the atlas sheet, or null for a card the hero never spreads. The
+   * sheet holds only the 22 the hero draws, so this is the only index `uvRect`
+   * may be given — `index` addressed a tile back when all 78 were packed, and
+   * passing it now samples the wrong art with no type error to stop you.
+   */
+  atlasIndex: number | null;
+}
+
+/** A card that has a tile, i.e. one the hero can actually render. */
+export interface HeroCard extends TarotCard {
+  atlasIndex: number;
 }
 
 interface Manifest {
@@ -40,6 +52,7 @@ interface Manifest {
   back: string;
   backAvif: string | null;
   cardSize: [number, number, number];
+  heroCount: number;
   atlases: Atlas[];
   cards: TarotCard[];
 }
@@ -56,14 +69,21 @@ export const [CARD_W, CARD_H, CARD_T] = MANIFEST.cardSize;
 /**
  * The 22 Major Arcana, in trump order (The Fool -> The World).
  *
- * The deck holds all 78 and the atlas ships all 78, but the hero spreads only
- * the trumps: across a single screen 78 cards overlap to a ~12% sliver each,
- * which neither showcases the art nor leaves a hoverable target. Point this at
- * CARDS to spread the full deck.
+ * The deck holds all 78 but the hero spreads only the trumps: across a single
+ * screen 78 cards overlap to a ~12% sliver each, which neither showcases the
+ * art nor leaves a hoverable target.
+ *
+ * The atlas is packed from exactly this subset, which is what paid for the
+ * tiles to go up to the masters' native 350x600 — 22 fit under the 4096 limit
+ * at full resolution where 78 had to be downsampled to 256x440. So this is
+ * derived from the sheet rather than re-filtering on arcana: a card with no
+ * atlasIndex has no tile, and the two cannot drift apart. To spread the full
+ * deck, change HERO_ARCANA in tools/build_deck.py and rebuild — the grids there
+ * have to grow with it.
  */
-export const HERO_CARDS: TarotCard[] = CARDS.filter(
-  (c) => c.arcana === "Major Arcana",
-);
+export const HERO_CARDS: HeroCard[] = CARDS.filter(
+  (c): c is HeroCard => c.atlasIndex !== null,
+).sort((a, b) => a.atlasIndex - b.atlasIndex);
 
 /**
  * The mobile fan, sampled evenly across the trumps (The Fool -> The World).
@@ -74,20 +94,24 @@ export const HERO_CARDS: TarotCard[] = CARDS.filter(
  */
 const MOBILE_COUNT = 7;
 
-export const MOBILE_CARDS: TarotCard[] = Array.from(
+export const MOBILE_CARDS: HeroCard[] = Array.from(
   { length: MOBILE_COUNT },
   (_, i) =>
     HERO_CARDS[Math.round((i * (HERO_CARDS.length - 1)) / (MOBILE_COUNT - 1))],
 );
 
 /** The spread for a viewport. Both the deck and the overlay resolve it. */
-export const heroCards = (isMobile: boolean): TarotCard[] =>
+export const heroCards = (isMobile: boolean): HeroCard[] =>
   isMobile ? MOBILE_CARDS : HERO_CARDS;
 
 export const byId = (id: string) => CARDS.find((c) => c.id === id);
 
 /**
  * The card's rect inside an atlas sheet, as [offsetU, offsetV, scaleU, scaleV].
+ *
+ * `index` here is a card's `atlasIndex` — its slot in the sheet — not its place
+ * in the 78-card deck. The two were the same number until the atlas stopped
+ * carrying the 56 cards the hero never draws.
  *
  * Row 0 is the TOP row and V grows downward, which only holds because the atlas
  * is sampled with `flipY = false` (the glTF convention, see useDeckTexture).
@@ -119,6 +143,16 @@ export function pickAtlas(maxTextureSize: number): Atlas {
     a.maxTextureSize > best.maxTextureSize ? a : best,
   );
 }
+
+/**
+ * The sheet all but the most limited GPUs resolve to, so it is the one worth
+ * preloading from the document head (layout.tsx).
+ *
+ * Routed through pickAtlas rather than reading atlases[0] on purpose: this has
+ * to agree with the runtime choice exactly. A preload for a URL the deck then
+ * declines to use is not a no-op — it is a megabyte fetched twice.
+ */
+export const TOP_ATLAS = pickAtlas(Number.POSITIVE_INFINITY);
 
 /**
  * Every sheet ships as AVIF (~37% smaller) with a WebP twin. Support cannot be

@@ -79,7 +79,11 @@ def check_atlas(atlas, cards, src_key="src"):
         return np.asarray(sheet.crop((x, y, x + tw, y + th)), dtype=float)
 
     for card in cards:
-        i = card["index"]
+        # atlasIndex, never index: the sheet holds only the cards the hero
+        # spreads, so a card's place in the 78-card deck no longer addresses a
+        # tile. Getting this wrong is precisely the off-by-one-slot bug the
+        # neighbour ratio below exists to catch.
+        i = card["atlasIndex"]
         # exactly the arithmetic Deck.jsx feeds the shader
         off_u, off_v = (i % cols) * tw / W, (i // cols) * th / H
         su, sv = tw / W, th / H
@@ -124,10 +128,20 @@ def main():
           [c["index"] for c in cards] == list(range(len(cards))))
     check("every card named", all(c["name"] and c["name"] != c["id"] for c in cards))
 
+    # The sheet is packed from this subset, and cardData.ts rebuilds HERO_CARDS
+    # from it, so a gap here is a card the deck would try to draw with no tile.
+    hero = [c for c in cards if c["atlasIndex"] is not None]
+    check(f"{manifest['heroCount']} cards carry an atlasIndex",
+          len(hero) == manifest["heroCount"], str(len(hero)))
+    check("atlas slots are dense and ordered",
+          [c["atlasIndex"] for c in hero] == list(range(len(hero))))
+    check("atlas slots fit every tier",
+          all(len(hero) <= a["cols"] * a["rows"] for a in manifest["atlases"]))
+
     print("\natlases")
     for atlas in manifest["atlases"]:
         for key in ("src", "srcAvif"):
-            check_atlas(atlas, cards, key)
+            check_atlas(atlas, hero, key)
 
     print("\nbackside")
     strays = sorted(p.name for p in MODELS.glob("*.glb") if p.name != "card.glb")

@@ -7,36 +7,37 @@
     1.714286,
     0.005
   ],
+  "heroCount": 22,
   "atlases": [
     {
-      "src": "/textures/deck-3328.webp",
-      "srcAvif": "/textures/deck-3328.avif",
-      "width": 3328,
-      "height": 2640,
-      "cols": 13,
-      "rows": 6,
+      "src": "/textures/hero-2100.webp",
+      "srcAvif": "/textures/hero-2100.avif",
+      "width": 2100,
+      "height": 2400,
+      "cols": 6,
+      "rows": 4,
       "tile": [
-        256,
-        440
+        350,
+        600
       ],
       "maxTextureSize": 4096,
-      "bytes": 1836113,
-      "bytesWebp": 2904708
+      "bytes": 1018680,
+      "bytesWebp": 1535854
     },
     {
-      "src": "/textures/deck-1920.webp",
-      "srcAvif": "/textures/deck-1920.avif",
-      "width": 1920,
-      "height": 1918,
-      "cols": 12,
-      "rows": 7,
+      "src": "/textures/hero-1788.webp",
+      "srcAvif": "/textures/hero-1788.avif",
+      "width": 1788,
+      "height": 2044,
+      "cols": 6,
+      "rows": 4,
       "tile": [
-        160,
-        274
+        298,
+        511
       ],
       "maxTextureSize": 2048,
-      "bytes": 821054,
-      "bytesWebp": 1187084
+      "bytes": 751714,
+      "bytesWebp": 1128966
     }
   ],
   "cards": [
@@ -54,7 +55,7 @@
         "motivation"
       ],
       "essence": "Trusting your feelings",
-      "image": "/cards/c01.jpg"
+      "atlasIndex": null
     },
     {
       "id": "c02",
@@ -70,7 +71,7 @@
         "affection"
       ],
       "essence": "Being drawn to someone",
-      "image": "/cards/c02.jpg"
+      "atlasIndex": null
     },
     {
       "id": "c03",
@@ -86,7 +87,7 @@
         "friendliness"
       ],
       "essence": "Celebrating your feelings or connections with others",
-      "image": "/cards/c03.jpg"
+      "atlasIndex": null
     },
     {
       "id": "c04",
@@ -102,7 +103,7 @@
         "stability"
       ],
       "essence": "Maintaining your emotional stability",
-      "image": "/cards/c04.jpg"
+      "atlasIndex": null
     },
     {
       "id": "c05",
@@ -118,7 +119,7 @@
         "regret"
       ],
       "essence": "Acknowledging loss and moving on",
-      "image": "/cards/c05.jpg"
+      "atlasIndex": null
     },
     {
       "id": "c06",
@@ -134,7 +135,7 @@
         "cooperation"
       ],
       "essence": "Donating your time and talents to others",
-      "image": "/cards/c06.jpg"
+      "atlasIndex": null
     },
     {
       "id": "c07",
@@ -150,7 +151,7 @@
         "goals"
       ],
       "essence": "Motivating yourself with images of future success",
-      "image": "/cards/c07.jpg"
+      "atlasIndex": null
     },
     {
       "id": "c08",
@@ -166,7 +167,7 @@
         "departure"
       ],
       "essence": "Wanting something better",
-      "image": "/cards/c08.jpg"
+      "atlasIndex": null
     },
     {
       "id": "c09",
@@ -182,7 +183,7 @@
         "pleasure"
       ],
       "essence": "Being delighted with your own achievements",
-      "image": "/cards/c09.jpg"
+      "atlasIndex": null
     },
     {
       "id": "c10",
@@ -198,7 +199,7 @@
         "giddiness"
       ],
       "essence": "Having more than you ever dreamed",
-      "image": "/cards/c10.jpg"
+      "atlasIndex": null
     },
     {
       "id": "c11",
@@ -214,7 +215,7 @@
         "superficiality"
       ],
       "essence": "Showing your emotions freely",
-      "image": "/cards/c11.jpg"
+      "atlasIndex": null
     },
     {
       "id": "c12",
@@ -230,7 +231,7 @@
         "illumination"
       ],
       "essence": "Being deeply committed to a cause",
-      "image": "/cards/c12.jpg"
+      "atlasIndex": null
     },
     {
       "id": "c13",
@@ -246,7 +247,7 @@
         "empathy"
       ],
       "essence": "Allowing yourself to be moved by the plight of others",
-      "image": "/cards/c13.jpg"
+      "atlasIndex": null
     },
     {
       "id": "c14",
@@ -262,7 +263,7 @@
         "composure"
       ],
       "essence": "Keeping a stiff upper lip",
-      "image": "/cards/c14.jpg"
+      "atlasIndex": null
     },
     {
       "id": "m00",
@@ -278,7 +279,7 @@
         "innocence"
       ],
       "essence": "Freeing yourself from limitation",
-      "image": "/cards/m00.jpg"
+      "atlasIndex": 0
     },
     {
       "id": "m01",
@@ -293,7 +294,7 @@
         "activity"
       ],
       "essence": "Taking appropriate action",
-      "image": "/cards/m01.jpg"
+      "atlasIndex": 1
     },
     {
       "id": "m02",
@@ -309,7 +310,7 @@
         "initiation"
       ],
       "essence": "Listening to your feelings and intuitions",
-      "image": "/cards/m02.jpg"
+      "atlasIndex": 2
     },
     {
       "id": "m03",
@@ -325,7 +326,7 @@
         "nurturing"
       ],
       "essence": "Nurturing yourself and others",
-      "image": "/cards/m03.jpg"
+      "atlasIndex": 3
     },
     {
       "id": "m04",
@@ -341,7 +342,7 @@
         "structure"
       ],
       "essence": "Exercising authority",
-      "image": "/cards/m04.jpg"
+      "atlasIndex": 4
     },
     {
       "id": "m05",
@@ -357,7 +358,7 @@
         "belief"
       ],
       "essence": "Teaching or guiding others",
-      "image": "/cards/m05.jpg"
+      "atlasIndex": 5
     },
     {
       "id": "m06",
@@ -373,7 +374,7 @@
         "choice"
       ],
       "essence": "Being in love",
-      "image": "/cards/m06.jpg"
+      "atlasIndex": 6
     },
     {
       "id": "m07",
@@ -389,7 +390,7 @@
         "success"
       ],
       "essence": "Breaking through barriers",
-      "image": "/cards/m07.jpg"
+      "atlasIndex": 7
     },
     {
       "id": "m08",
@@ -405,7 +406,7 @@
         "power"
       ],
       "essence": "Imposing restrictions on yourself for your own benefit",
-      "image": "/cards/m08.jpg"
+      "atlasIndex": 8
     },
     {
       "id": "m09",
@@ -421,7 +422,7 @@
         "withdrawal"
       ],
       "essence": "Becoming or seeking out a guru",
-      "image": "/cards/m09.jpg"
+      "atlasIndex": 9
     },
     {
       "id": "m10",
@@ -437,7 +438,7 @@
         "karma"
       ],
       "essence": "Allowing events to unfold",
-      "image": "/cards/m10.jpg"
+      "atlasIndex": 10
     },
     {
       "id": "m11",
@@ -453,7 +454,7 @@
         "objectivity"
       ],
       "essence": "Making an objective decision",
-      "image": "/cards/m11.jpg"
+      "atlasIndex": 11
     },
     {
       "id": "m12",
@@ -469,7 +470,7 @@
         "suspension"
       ],
       "essence": "Seeing growth opportunities in unpleasant events",
-      "image": "/cards/m12.jpg"
+      "atlasIndex": 12
     },
     {
       "id": "m13",
@@ -485,7 +486,7 @@
         "passage"
       ],
       "essence": "Bringing an unpleasant phase of life to an end",
-      "image": "/cards/m13.jpg"
+      "atlasIndex": 13
     },
     {
       "id": "m14",
@@ -501,7 +502,7 @@
         "combination"
       ],
       "essence": "Bringing opposites together",
-      "image": "/cards/m14.jpg"
+      "atlasIndex": 14
     },
     {
       "id": "m15",
@@ -517,7 +518,7 @@
         "delusion"
       ],
       "essence": "Appreciating the luxuries that life has to offer",
-      "image": "/cards/m15.jpg"
+      "atlasIndex": 15
     },
     {
       "id": "m16",
@@ -533,7 +534,7 @@
         "disaster"
       ],
       "essence": "Breaking out of old, confining habits and mindsets",
-      "image": "/cards/m16.jpg"
+      "atlasIndex": 16
     },
     {
       "id": "m17",
@@ -549,7 +550,7 @@
         "certainty"
       ],
       "essence": "Hoping for the best",
-      "image": "/cards/m17.jpg"
+      "atlasIndex": 17
     },
     {
       "id": "m18",
@@ -565,7 +566,7 @@
         "dreams"
       ],
       "essence": "Enjoying healthy fantasies and daydreams",
-      "image": "/cards/m18.jpg"
+      "atlasIndex": 18
     },
     {
       "id": "m19",
@@ -581,7 +582,7 @@
         "attention"
       ],
       "essence": "Seeing things clearly",
-      "image": "/cards/m19.jpg"
+      "atlasIndex": 19
     },
     {
       "id": "m20",
@@ -597,7 +598,7 @@
         "evaluation"
       ],
       "essence": "Receiving a wake-up call",
-      "image": "/cards/m20.jpg"
+      "atlasIndex": 20
     },
     {
       "id": "m21",
@@ -613,7 +614,7 @@
         "completeness"
       ],
       "essence": "Having it all",
-      "image": "/cards/m21.jpg"
+      "atlasIndex": 21
     },
     {
       "id": "p01",
@@ -629,7 +630,7 @@
         "receiving"
       ],
       "essence": "Outlining a plan for achieving prosperity",
-      "image": "/cards/p01.jpg"
+      "atlasIndex": null
     },
     {
       "id": "p02",
@@ -645,7 +646,7 @@
         "diagnosis"
       ],
       "essence": "Weighing options",
-      "image": "/cards/p02.jpg"
+      "atlasIndex": null
     },
     {
       "id": "p03",
@@ -661,7 +662,7 @@
         "contribution"
       ],
       "essence": "Finishing a project",
-      "image": "/cards/p03.jpg"
+      "atlasIndex": null
     },
     {
       "id": "p04",
@@ -677,7 +678,7 @@
         "safety"
       ],
       "essence": "Saving for a rainy day",
-      "image": "/cards/p04.jpg"
+      "atlasIndex": null
     },
     {
       "id": "p05",
@@ -693,7 +694,7 @@
         "crisis"
       ],
       "essence": "Recognizing your needs and taking action to fulfill them",
-      "image": "/cards/p05.jpg"
+      "atlasIndex": null
     },
     {
       "id": "p06",
@@ -709,7 +710,7 @@
         "sharing"
       ],
       "essence": "Giving time, money, or effort to a charity",
-      "image": "/cards/p06.jpg"
+      "atlasIndex": null
     },
     {
       "id": "p07",
@@ -725,7 +726,7 @@
         "reflection"
       ],
       "essence": "Measuring progress toward your goal",
-      "image": "/cards/p07.jpg"
+      "atlasIndex": null
     },
     {
       "id": "p08",
@@ -740,7 +741,7 @@
         "skill"
       ],
       "essence": "Doing your best",
-      "image": "/cards/p08.jpg"
+      "atlasIndex": null
     },
     {
       "id": "p09",
@@ -756,7 +757,7 @@
         "enough"
       ],
       "essence": "Investing time in learning or teaching a difficult task",
-      "image": "/cards/p09.jpg"
+      "atlasIndex": null
     },
     {
       "id": "p10",
@@ -772,7 +773,7 @@
         "greed"
       ],
       "essence": "Celebrating your physical and financial blessings",
-      "image": "/cards/p10.jpg"
+      "atlasIndex": null
     },
     {
       "id": "p11",
@@ -788,7 +789,7 @@
         "growth"
       ],
       "essence": "Learning the value of a dollar",
-      "image": "/cards/p11.jpg"
+      "atlasIndex": null
     },
     {
       "id": "p12",
@@ -804,7 +805,7 @@
         "invention"
       ],
       "essence": "Spending money wisely",
-      "image": "/cards/p12.jpg"
+      "atlasIndex": null
     },
     {
       "id": "p13",
@@ -820,7 +821,7 @@
         "generosity"
       ],
       "essence": "Appreciating fine food, fine wine, beautiful art, beautiful bodies, or any of the better things in life",
-      "image": "/cards/p13.jpg"
+      "atlasIndex": null
     },
     {
       "id": "p14",
@@ -836,7 +837,7 @@
         "intervention"
       ],
       "essence": "Becoming debt-free",
-      "image": "/cards/p14.jpg"
+      "atlasIndex": null
     },
     {
       "id": "s01",
@@ -852,7 +853,7 @@
         "choice"
       ],
       "essence": "Making objective decisions",
-      "image": "/cards/s01.jpg"
+      "atlasIndex": null
     },
     {
       "id": "s02",
@@ -868,7 +869,7 @@
         "truce"
       ],
       "essence": "Refusing to make a decision without getting the facts",
-      "image": "/cards/s02.jpg"
+      "atlasIndex": null
     },
     {
       "id": "s03",
@@ -884,7 +885,7 @@
         "heartache"
       ],
       "essence": "Being brave enough to see things as they really are",
-      "image": "/cards/s03.jpg"
+      "atlasIndex": null
     },
     {
       "id": "s04",
@@ -900,7 +901,7 @@
         "mindset"
       ],
       "essence": "Thinking over your plans before putting them into action",
-      "image": "/cards/s04.jpg"
+      "atlasIndex": null
     },
     {
       "id": "s05",
@@ -916,7 +917,7 @@
         "self-preservation"
       ],
       "essence": "Acting in your own best interest",
-      "image": "/cards/s05.jpg"
+      "atlasIndex": null
     },
     {
       "id": "s06",
@@ -932,7 +933,7 @@
         "travel"
       ],
       "essence": "Making the best of a bad situation",
-      "image": "/cards/s06.jpg"
+      "atlasIndex": null
     },
     {
       "id": "s07",
@@ -948,7 +949,7 @@
         "assumptions"
       ],
       "essence": "Refusing to do something dishonest, even when there's no chance of ever being caught",
-      "image": "/cards/s07.jpg"
+      "atlasIndex": null
     },
     {
       "id": "s08",
@@ -964,7 +965,7 @@
         "helplessness"
       ],
       "essence": "Honoring limits",
-      "image": "/cards/s08.jpg"
+      "atlasIndex": null
     },
     {
       "id": "s09",
@@ -980,7 +981,7 @@
         "conclusion"
       ],
       "essence": "Refusing to worry about what you cannot control",
-      "image": "/cards/s09.jpg"
+      "atlasIndex": null
     },
     {
       "id": "s10",
@@ -996,7 +997,7 @@
         "stamina"
       ],
       "essence": "Seeing the signs that you've reached your limits",
-      "image": "/cards/s10.jpg"
+      "atlasIndex": null
     },
     {
       "id": "s11",
@@ -1012,7 +1013,7 @@
         "information"
       ],
       "essence": "Pursuing a course of study",
-      "image": "/cards/s11.jpg"
+      "atlasIndex": null
     },
     {
       "id": "s12",
@@ -1028,7 +1029,7 @@
         "investigation"
       ],
       "essence": "Speaking your mind",
-      "image": "/cards/s12.jpg"
+      "atlasIndex": null
     },
     {
       "id": "s13",
@@ -1044,7 +1045,7 @@
         "charm"
       ],
       "essence": "Exercising tact or using diplomacy",
-      "image": "/cards/s13.jpg"
+      "atlasIndex": null
     },
     {
       "id": "s14",
@@ -1060,7 +1061,7 @@
         "verdict"
       ],
       "essence": "Expressing yourself with firmness and authority",
-      "image": "/cards/s14.jpg"
+      "atlasIndex": null
     },
     {
       "id": "w01",
@@ -1076,7 +1077,7 @@
         "creation"
       ],
       "essence": "Being inspired",
-      "image": "/cards/w01.jpg"
+      "atlasIndex": null
     },
     {
       "id": "w02",
@@ -1092,7 +1093,7 @@
         "individuality"
       ],
       "essence": "Having a choice",
-      "image": "/cards/w02.jpg"
+      "atlasIndex": null
     },
     {
       "id": "w03",
@@ -1107,7 +1108,7 @@
         "exploration"
       ],
       "essence": "Putting a plan into motion",
-      "image": "/cards/w03.jpg"
+      "atlasIndex": null
     },
     {
       "id": "w04",
@@ -1123,7 +1124,7 @@
         "teamwork"
       ],
       "essence": "Sharing in a great celebration",
-      "image": "/cards/w04.jpg"
+      "atlasIndex": null
     },
     {
       "id": "w05",
@@ -1139,7 +1140,7 @@
         "objection"
       ],
       "essence": "Calmly expressing a dissenting opinion",
-      "image": "/cards/w05.jpg"
+      "atlasIndex": null
     },
     {
       "id": "w06",
@@ -1155,7 +1156,7 @@
         "triumph"
       ],
       "essence": "Outperforming your peers",
-      "image": "/cards/w06.jpg"
+      "atlasIndex": null
     },
     {
       "id": "w07",
@@ -1170,7 +1171,7 @@
         "determination"
       ],
       "essence": "Refusing to be silenced through fear or intimidation",
-      "image": "/cards/w07.jpg"
+      "atlasIndex": null
     },
     {
       "id": "w08",
@@ -1186,7 +1187,7 @@
         "change"
       ],
       "essence": "Taking swift action",
-      "image": "/cards/w08.jpg"
+      "atlasIndex": null
     },
     {
       "id": "w09",
@@ -1202,7 +1203,7 @@
         "loyalty"
       ],
       "essence": "Sticking with it for the duration",
-      "image": "/cards/w09.jpg"
+      "atlasIndex": null
     },
     {
       "id": "w10",
@@ -1218,7 +1219,7 @@
         "oppression"
       ],
       "essence": "Holding your own in extreme circumstances",
-      "image": "/cards/w10.jpg"
+      "atlasIndex": null
     },
     {
       "id": "w11",
@@ -1234,7 +1235,7 @@
         "validation"
       ],
       "essence": "Leaping at a new opportunity",
-      "image": "/cards/w11.jpg"
+      "atlasIndex": null
     },
     {
       "id": "w12",
@@ -1250,7 +1251,7 @@
         "persuasion"
       ],
       "essence": "Charging ahead",
-      "image": "/cards/w12.jpg"
+      "atlasIndex": null
     },
     {
       "id": "w13",
@@ -1266,7 +1267,7 @@
         "collaboration"
       ],
       "essence": "Paying close attention",
-      "image": "/cards/w13.jpg"
+      "atlasIndex": null
     },
     {
       "id": "w14",
@@ -1282,7 +1283,7 @@
         "direction"
       ],
       "essence": "Putting old things together in new and exciting ways",
-      "image": "/cards/w14.jpg"
+      "atlasIndex": null
     }
   ]
 }

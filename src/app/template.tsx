@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 /**
@@ -19,10 +19,31 @@ import { motion, useReducedMotion } from "framer-motion";
  * Distances are small (10px) and the duration short (0.4s). This runs on every
  * navigation including back/forward, where anything longer stops reading as
  * polish and starts reading as the site being slow.
+ *
+ * ...but NOT on the first load, and that carve-out is a performance fix, not a
+ * taste call. `initial` is server-rendered as an inline style, so on a cold load
+ * this wrapper shipped the entire page — hero canvas included — as opacity: 0
+ * and held it there until hydration. It then composited the whole 200svh
+ * document at a fractional opacity for 400ms, concurrently with WebGL context
+ * creation, shader compilation and the atlas upload. A transition nobody asked
+ * for, paid for at the worst possible moment. A first load has nothing to
+ * transition *from*, so there was never anything to see.
  */
+
+/** Module scope on purpose: survives the remount a navigation causes, resets on
+ *  a full page load. That is exactly the first-load/navigation distinction. */
+let hasNavigated = false;
+
 export default function Template({ children }: { children: ReactNode }) {
   const reducedMotion = useReducedMotion();
-  if (reducedMotion) return <>{children}</>;
+  // Read once at mount. On the server and during hydration this is false, so
+  // the markup matches and the page paints as soon as the HTML arrives.
+  const [shouldAnimate] = useState(() => hasNavigated);
+  useEffect(() => {
+    hasNavigated = true;
+  }, []);
+
+  if (reducedMotion || !shouldAnimate) return <>{children}</>;
 
   return (
     <motion.div

@@ -340,7 +340,7 @@ export default function TarotDeck3D({
 
   const uvAttribute = useMemo(() => {
     const data = new Float32Array(cards.length * 4);
-    cards.forEach((card, i) => data.set(uvRect(atlas, card.index), i * 4));
+    cards.forEach((card, i) => data.set(uvRect(atlas, card.atlasIndex), i * 4));
     return new THREE.InstancedBufferAttribute(data, 4);
   }, [atlas, cards]);
 

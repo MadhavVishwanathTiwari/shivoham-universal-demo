@@ -30,3 +30,8 @@ tools/__pycache__/
 # full-resolution card masters (~7 MB each). The tracked source of truth is the
 # 350x600 set in cards/, which is all tools/build_deck.py consumes.
 watermark-removed-*.png
+
+# ...and nothing should ever put that set back under public/. It was a byte-for-
+# byte copy of cards/ (79 files, 7.5 MB) that no browser ever requested: the deck
+# reads its art from the atlas in public/textures/, never from per-card files.
+/public/cards/

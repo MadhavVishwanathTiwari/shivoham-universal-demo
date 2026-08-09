@@ -30,13 +30,30 @@ CARDS = ROOT / "cards"
 MODELS = ROOT / "public" / "models"
 TEXTURES = ROOT / "public" / "textures"
 
+# The hero spreads the 22 trumps and nothing else (see HERO_CARDS in
+# cardData.ts), so the sheet holds 22 tiles rather than all 78. The 56 tiles it
+# used to carry were downloaded and decoded by every visitor and sampled by
+# nobody.
+#
+# That is also what pays for the tile size. The old top tier downsampled the
+# 350x600 masters to 256x440 to fit 78 of them under the 4096 limit; 22 fit at
+# full resolution with room to spare, so the sheet is now both smaller
+# (2100x2400 = 5.0MP against 3328x2640 = 8.8MP) and sharper. It needed to be:
+# a focused card on a phone spans ~62% of the viewport (MOBILE_FIT), i.e.
+# ~480 device px against a 256px tile.
+#
 # (label, cols, rows, tile_w, tile_h, max_texture_size it targets)
-# Grids are sized so the atlas clears the tier's texture limit: WebGL only
-# guarantees 2048, so the mobile sheet must fit inside that on both axes.
+# Grids clear the tier's texture limit on BOTH axes: WebGL only guarantees 2048.
 TIERS = [
-    ("deck-3328", 13, 6, 256, 440, 4096),   # 3328x2640, 78 slots exactly
-    ("deck-1920", 12, 7, 160, 274, 2048),   # 1920x1918, 84 slots (6 spare)
+    ("hero-2100", 6, 4, 350, 600, 4096),   # 2100x2400, masters at native size
+    ("hero-1788", 6, 4, 298, 511, 2048),   # 1788x2044, same grid inside 2048
 ]
+
+# Which cards the hero spreads. This is the single source of truth: the atlas is
+# packed from it and cardData.ts derives HERO_CARDS from the atlasIndex this
+# stamps on each card. To spread the full deck, set this to None and rebuild —
+# the grids above need to grow to match (78 tiles at 350x600 will not fit 4096).
+HERO_ARCANA = "Major Arcana"
 BACK_SIZE = (512, 742)
 WEBP_QUALITY = 82
 AVIF_CRF = 28          # measured knee: ~37% under WebP q82 with cleaner linework
@@ -100,9 +117,40 @@ def main():
     back_avif = encode_avif(back, TEXTURES / "back.avif")
     back_bytes = (back_avif or TEXTURES / "back.webp").stat().st_size
 
+    cards = []
+    for i, path in enumerate(faces):
+        card = meta.get(path.name, {})
+        # The hero tooltip shows a name + one line + a few keywords. Carry only
+        # that here; the full readings stay in tarot-images.json rather than
+        # riding along in the client bundle.
+        light = (card.get("meanings") or {}).get("light") or []
+        cards.append({
+            "id": path.stem,
+            "index": i,
+            "name": card.get("name", path.stem),
+            "arcana": card.get("arcana"),
+            "suit": card.get("suit"),
+            "number": card.get("number"),
+            "keywords": (card.get("keywords") or [])[:KEYWORD_LIMIT],
+            "essence": light[0] if light else "",
+            # a slot in the atlas, or null for a card the hero never draws
+            "atlasIndex": None,
+        })
+
+    # `index` is a card's place in the full 78-card deck; `atlasIndex` is its
+    # slot in the sheet. They used to be the same number, which is exactly why
+    # this is now explicit — the UV arithmetic may only ever use atlasIndex, and
+    # a card without one has no tile to sample.
+    hero = [c for c in cards if HERO_ARCANA is None or c["arcana"] == HERO_ARCANA]
+    for slot, card in enumerate(hero):
+        card["atlasIndex"] = slot
+    hero_faces = [faces[c["index"]] for c in hero]
+
     atlases, base = [], mesh_bytes + back_bytes
+    built = set()
     for label, cols, rows, tw, th, limit in TIERS:
-        path, avif, (w, h) = build_atlas(faces, label, cols, rows, tw, th)
+        path, avif, (w, h) = build_atlas(hero_faces, label, cols, rows, tw, th)
+        built.update({path.name} | ({avif.name} if avif else set()))
         size = path.stat().st_size
         avif_size = avif.stat().st_size if avif else 0
         atlases.append({
@@ -120,30 +168,22 @@ def main():
         saved = f"  avif {avif_size/1024:5.0f} KB (-{100*(1-avif_size/size):.0f}%)" if avif else ""
         print(f"{label:11} {w}x{h}  webp {size/1024:6.0f} KB{saved}  ~{vram:5.1f} MB VRAM")
 
-    cards = []
-    for i, path in enumerate(faces):
-        card = meta.get(path.name, {})
-        # The hero tooltip shows a name + one line + a few keywords. Carry only
-        # that here; the full readings stay in tarot-images.json rather than
-        # riding along in the client bundle.
-        light = (card.get("meanings") or {}).get("light") or []
-        cards.append({
-            "id": path.stem,
-            "index": i,
-            "name": card.get("name", path.stem),
-            "arcana": card.get("arcana"),
-            "suit": card.get("suit"),
-            "number": card.get("number"),
-            "keywords": (card.get("keywords") or [])[:KEYWORD_LIMIT],
-            "essence": light[0] if light else "",
-            "image": f"/cards/{path.name}",
-        })
+    # Sheets from a previous run under a different label are dead weight that
+    # nothing references and every deploy still carries — renaming a tier used to
+    # silently leave 6.6 MB of orphans behind. Scoped to sheet files so the
+    # backside, which is not a tier, survives.
+    for stale in sorted(TEXTURES.glob("*-*.webp")) + sorted(TEXTURES.glob("*-*.avif")):
+        if stale.name not in built:
+            stale.unlink()
+            print(f"  removed stale sheet {stale.name}")
 
     manifest = {
         "model": "/models/card.glb",
         "back": "/textures/back.webp",
         "backAvif": "/textures/back.avif" if back_avif else None,
         "cardSize": [CARD_W, round(CARD_H, 6), CARD_T],
+        # how many of `cards` carry an atlasIndex; verify_deck.py asserts it
+        "heroCount": len(hero),
         "atlases": atlases,
         "cards": cards,
     }
@@ -153,7 +193,7 @@ def main():
     print(f"\ncard.glb {mesh_bytes/1024:.1f} KB  back.webp {back_bytes/1024:.1f} KB")
     for a in atlases:
         # a device downloads the mesh, ONE atlas, and the backside — never both sheets
-        print(f"{len(cards)} cards via {a['src']}: "
+        print(f"{len(hero)} of {len(cards)} cards via {a['src']}: "
               f"{(base + a['bytes'])/1024/1024:.2f} MB over 3 requests")
 
 

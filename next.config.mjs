@@ -3,6 +3,16 @@ const nextConfig = {
   // three ships untranspiled ESM in a few addon paths; drei re-exports them.
   transpilePackages: ["three"],
 
+  experimental: {
+    /*
+     * drei and framer-motion are both barrel files re-exporting a few hundred
+     * modules each. Without this every import of `Environment` or `motion`
+     * pulls the whole barrel into the graph, which on the homepage means the
+     * hero's client bundle carries drei helpers nothing renders.
+     */
+    optimizePackageImports: ["@react-three/drei", "framer-motion"],
+  },
+
   async redirects() {
     return [
       {

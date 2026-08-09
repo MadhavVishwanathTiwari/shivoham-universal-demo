@@ -49,6 +49,15 @@ export default function HeroSection() {
   /** A card is being read on a phone: the sheet is up and the copy gets out. */
   const inspecting = isMobile && selected !== null;
 
+  /**
+   * The headline's entrance is done, so its compositor layer can be released.
+   * `will-change` is a promise about the *future*; leaving it on a text node
+   * that carries a 24px text-shadow keeps a raster layer alive for the life of
+   * the page to buy nothing — the same trap .invite-hint documents in
+   * globals.css.
+   */
+  const [headlineSettled, setHeadlineSettled] = useState(false);
+
   /*
    * The gather phase. "end end" puts progress = 1 exactly where the stage
    * unpins, so this range covers only the pinned scrolling.
@@ -276,10 +285,35 @@ export default function HeroSection() {
 
             <div aria-hidden className="rule-astral mt-4 h-px w-32" />
 
+            {/*
+              The blur is on its own clock, and deliberately the shortest thing
+              here. opacity and y are compositor properties — free. `filter` is
+              not: every frame re-rasterizes the glyphs *and* the 24px
+              text-glow-gold shadow beneath them, on the main thread, while
+              Cinzel swaps in underneath (display: swap) and invalidates the
+              raster again. Running that for the full second put ~1s of the most
+              expensive paint on the page directly on top of the deck's WebGL
+              init — context creation, shader compile, and an 8.8MP atlas
+              upload. The burst dropped frames; the blur is what made them
+              visible as a stutter. 0.45s clears the collision, and at this
+              easing the soft focus-in reads the same.
+            */}
             <motion.h1
               initial={{ opacity: 0, y: 26, filter: "blur(10px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ delay: 0.1, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+              transition={{
+                delay: 0.1,
+                duration: 1,
+                ease: [0.22, 1, 0.36, 1],
+                filter: { delay: 0.1, duration: 0.45, ease: "easeOut" },
+              }}
+              onAnimationComplete={() => setHeadlineSettled(true)}
+              /* All three animating properties, not just filter: naming only
+                 filter would replace the will-change Framer sets for the
+                 transform/opacity pair and deoptimize them. */
+              style={{
+                willChange: headlineSettled ? "auto" : "filter, transform, opacity",
+              }}
               className="font-cinzel text-parchment-white text-glow-gold mt-5 text-[1.4rem] leading-[1.15] font-semibold text-balance sm:text-4xl md:mt-6 md:text-5xl"
             >
               Unlock the answers written in your stars
