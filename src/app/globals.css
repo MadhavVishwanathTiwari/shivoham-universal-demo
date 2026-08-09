@@ -120,11 +120,18 @@
      scroll container between the viewport and a `position: sticky` element stops
      it sticking. That silently un-pinned the hero's 100svh stage, so the deck
      slid up the screen mid-gather instead of gathering in place. `clip` cuts off
-     sideways scrolling without creating a scroll container. */
+     sideways scrolling without creating a scroll container.
+
+     Note what is deliberately NOT here: `overscroll-behavior-y: none`. It used
+     to sit alongside the clip and it disables pull-to-refresh on Android, which
+     is the only way a visitor can force a reload on a phone. That cost surfaced
+     the hard way — a hero that failed left no way back to a working page short
+     of clearing site data. The overscroll glow it suppressed is not worth an
+     unrecoverable page. If a future change needs to contain overscroll, scope it
+     to the element that actually needs it rather than the document. */
   html,
   body {
     overflow-x: clip;
-    overscroll-behavior-y: none;
   }
 }
 
